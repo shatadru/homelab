@@ -1,0 +1,44 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argo-cd
+  namespace: argocd
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-cd
+    targetRevision: 10.3.2
+    helm:
+      values: |
+        server:
+          ingress:
+            enabled: false
+
+        controller:
+          metrics:
+            serviceMonitor:
+              enabled: false
+
+        repoServer:
+          metrics:
+            serviceMonitor:
+              enabled: false
+
+        applicationSet:
+          metrics:
+            serviceMonitor:
+              enabled: false
+
+  syncPolicy:
+    automated:
+      enabled: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
