@@ -1,0 +1,27 @@
+# K3s configuration for the initial single-node MS-A2 cluster.
+#
+# Node:
+#   minisforum-server
+#   LAN: 192.168.0.163
+#
+# This configuration is intentionally suitable for the initial
+# single-node phase. Cilium provides the CNI.
+
+write-kubeconfig-mode: "0644"
+
+# Cilium replaces Flannel.
+flannel-backend: "none"
+
+# Cilium provides network policy.
+disable-network-policy: true
+
+# These K3s bundled components are managed separately.
+disable:
+  - traefik
+  - servicelb
+  - local-storage
+
+# Explicitly bind Kubernetes to the primary LAN interface.
+# The separate enp4s0 interface is reserved for NAS/NFS traffic.
+node-ip: "192.168.0.163"
+advertise-address: "192.168.0.163"

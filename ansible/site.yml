@@ -1,0 +1,12 @@
+---
+# Intended entry point for the reproducible node bootstrap.
+#
+# Roles will be implemented incrementally from the manually validated
+# configuration. Do not treat this as functional automation yet.
+
+- name: Bootstrap HOMELAB Kubernetes nodes
+  hosts: k3s_servers:k3s_agents
+  become: true
+  roles:
+    - base
+    - k3s

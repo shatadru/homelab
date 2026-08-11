@@ -1,0 +1,25 @@
+# Kubernetes credentials / secrets
+*.kubeconfig
+kubeconfig
+k3s.yaml
+*.key
+*.crt
+*.pem
+
+# Local environment
+.env
+.env.*
+
+# Ansible
+*.retry
+.vault-password
+
+# Temporary files
+tmp/
+.tmp/
+*.tmp
+
+# Editor / OS
+.vim/
+*.swp
+.DS_Store

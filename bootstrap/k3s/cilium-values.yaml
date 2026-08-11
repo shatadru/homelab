@@ -1,0 +1,21 @@
+# Cilium configuration for the initial single-node K3s cluster.
+
+ipam:
+  mode: cluster-pool
+  operator:
+    clusterPoolIPv4PodCIDRList:
+      - "10.42.0.0/16"
+    clusterPoolIPv4MaskSize: 24
+
+# Keep kube-proxy initially.
+# Kube-proxy replacement can be evaluated after the base cluster is stable.
+kubeProxyReplacement: "false"
+
+# K3s API server.
+k8sServiceHost: "192.168.0.163"
+k8sServicePort: "6443"
+
+# Single-node bootstrap.
+# Increase to 2+ when the cluster has multiple suitable nodes.
+operator:
+  replicas: 1

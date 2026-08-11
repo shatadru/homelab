@@ -1,0 +1,25 @@
+# Argo CD bootstrap configuration.
+#
+# This configuration is intentionally minimal.
+# Features depending on other infrastructure, such as Tailscale
+# ingress and Prometheus ServiceMonitors, will be enabled later
+# through the GitOps-managed infrastructure configuration.
+
+server:
+  ingress:
+    enabled: false
+
+controller:
+  metrics:
+    serviceMonitor:
+      enabled: false
+
+repoServer:
+  metrics:
+    serviceMonitor:
+      enabled: false
+
+applicationSet:
+  metrics:
+    serviceMonitor:
+      enabled: false
