@@ -21,6 +21,7 @@ spec:
         kubeProxyReplacement: true
         nodeIPAM:
           enabled: true
+        defaultLBServiceIPAM: nodeipam
         gatewayAPI:
           enabled: true
 
