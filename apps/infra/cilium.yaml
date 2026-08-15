@@ -19,7 +19,8 @@ spec:
             clusterPoolIPv4MaskSize: 24
 
         kubeProxyReplacement: true
-
+        nodeIPAM:
+          enabled: true
         gatewayAPI:
           enabled: true
 
