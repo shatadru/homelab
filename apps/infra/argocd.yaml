@@ -18,7 +18,9 @@ spec:
       values: |
         server:
           ingress:
-            enabled: false
+            enabled: true
+            ingressClassName: tailscale
+            tls: true
 
         controller:
           metrics:
