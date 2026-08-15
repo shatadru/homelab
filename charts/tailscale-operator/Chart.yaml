@@ -1,0 +1,11 @@
+apiVersion: v2
+name: tailscale-operator-wrapper
+description: GitOps wrapper for the upstream Tailscale Operator Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=tailscale-operator registryUrl=https://pkgs.tailscale.com/helmcharts
+dependencies:
+  - name: tailscale-operator
+    repository: https://pkgs.tailscale.com/helmcharts
+    version: 1.102.2

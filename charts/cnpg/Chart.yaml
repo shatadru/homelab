@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cnpg-wrapper
+description: GitOps wrapper for the upstream CloudNativePG Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=cloudnative-pg registryUrl=https://cloudnative-pg.io/charts/
+dependencies:
+  - name: cloudnative-pg
+    repository: https://cloudnative-pg.io/charts/
+    version: 0.27.1

@@ -1,0 +1,11 @@
+apiVersion: v2
+name: cilium-wrapper
+description: GitOps wrapper for the upstream Cilium Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=cilium registryUrl=https://helm.cilium.io/
+dependencies:
+  - name: cilium
+    repository: https://helm.cilium.io/
+    version: 1.20.0
