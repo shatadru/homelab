@@ -1,0 +1,5 @@
+cloudnative-pg:
+  webhook:
+    startupProbe:
+      failureThreshold: 60
+      periodSeconds: 50

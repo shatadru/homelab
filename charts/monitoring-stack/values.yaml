@@ -1,0 +1,12 @@
+kube-prometheus-stack:
+  alertmanager:
+    ingress:
+      enabled: false
+
+  grafana:
+    ingress:
+      enabled: false
+
+  prometheus:
+    ingress:
+      enabled: false
