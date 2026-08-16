@@ -31,3 +31,58 @@ gatus:
         interval: 60s
         conditions:
           - "[STATUS] == 200"
+
+      - name: Argo CD
+        group: internal
+        url: https://192.168.0.11
+        interval: 60s
+        headers:
+          Host: argocd.home.shatadru.in
+        client:
+          insecure: true
+        conditions:
+          - "[STATUS] < 400"
+
+      - name: Grafana
+        group: internal
+        url: https://192.168.0.11
+        interval: 60s
+        headers:
+          Host: grafana.home.shatadru.in
+        client:
+          insecure: true
+        conditions:
+          - "[STATUS] < 400"
+
+      - name: Prometheus
+        group: internal
+        url: https://192.168.0.11
+        interval: 60s
+        headers:
+          Host: prometheus.home.shatadru.in
+        client:
+          insecure: true
+        conditions:
+          - "[STATUS] < 400"
+
+      - name: Alertmanager
+        group: internal
+        url: https://192.168.0.11
+        interval: 60s
+        headers:
+          Host: alertmanager.home.shatadru.in
+        client:
+          insecure: true
+        conditions:
+          - "[STATUS] < 400"
+
+      - name: Gatus
+        group: internal
+        url: https://192.168.0.11
+        interval: 60s
+        headers:
+          Host: gatus.home.shatadru.in
+        client:
+          insecure: true
+        conditions:
+          - "[STATUS] < 400"
