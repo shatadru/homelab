@@ -1,9 +1,4 @@
 traefik:
-  ingressClass:
-    enabled: true
-    isDefaultClass: true
-    name: traefik
-
   providers:
     kubernetesGateway:
       enabled: true
