@@ -1,0 +1,7 @@
+metallb:
+  # This homelab uses Layer 2 advertisement only; BGP is not required.
+  frrk8s:
+    enabled: false
+  speaker:
+    frr:
+      enabled: false

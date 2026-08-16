@@ -1,0 +1,11 @@
+apiVersion: v2
+name: metallb-wrapper
+description: GitOps wrapper for the upstream MetalLB Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=metallb registryUrl=https://metallb.github.io/metallb
+dependencies:
+  - name: metallb
+    repository: https://metallb.github.io/metallb
+    version: 0.16.1
