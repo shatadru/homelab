@@ -6,6 +6,11 @@ traefik:
       enabled: true
       ingressClass: traefik
 
+  ingressClass:
+    enabled: true
+    isDefaultClass: true
+    name: traefik
+
   gateway:
     enabled: false
 
