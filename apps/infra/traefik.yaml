@@ -8,7 +8,7 @@ spec:
   source:
     repoURL: git@github.com:shatadru/homelab.git
     path: charts/traefik
-    targetRevision: agent/add-traefik-gateway
+    targetRevision: main
   destination:
     server: https://kubernetes.default.svc
     namespace: traefik
