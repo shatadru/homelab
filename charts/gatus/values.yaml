@@ -31,3 +31,38 @@ gatus:
         interval: 60s
         conditions:
           - "[STATUS] == 200"
+
+      - name: Argo CD
+        group: homelab
+        url: https://argocd.home.shatadru.in
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
+
+      - name: Grafana
+        group: homelab
+        url: https://grafana.home.shatadru.in/api/health
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
+
+      - name: Prometheus
+        group: homelab
+        url: https://prometheus.home.shatadru.in/-/healthy
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
+
+      - name: Alertmanager
+        group: homelab
+        url: https://alertmanager.home.shatadru.in/-/healthy
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
+
+      - name: Gatus
+        group: homelab
+        url: https://gatus.home.shatadru.in
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
