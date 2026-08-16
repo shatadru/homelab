@@ -1,12 +1,12 @@
 kube-prometheus-stack:
   alertmanager:
     ingress:
-      enabled: false
+      enabled: true
 
   grafana:
     ingress:
-      enabled: false
+      enabled: true
 
   prometheus:
     ingress:
-      enabled: false
+      enabled: true
