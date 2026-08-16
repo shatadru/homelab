@@ -3,8 +3,7 @@
   "extends": ["config:recommended"],
   "enabledManagers": [
     "helmv3",
-    "helm-values",
-    "docker"
+    "helm-values"
   ],
   "dependencyDashboard": false,
   "automerge": false,
