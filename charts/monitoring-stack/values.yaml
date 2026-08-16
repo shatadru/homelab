@@ -2,11 +2,17 @@ kube-prometheus-stack:
   alertmanager:
     ingress:
       enabled: true
+      hosts:
+        - alertmanager.home.shatadru.in
 
   grafana:
     ingress:
       enabled: true
+      hosts:
+        - grafana.home.shatadru.in
 
   prometheus:
     ingress:
       enabled: true
+      hosts:
+        - prometheus.home.shatadru.in
