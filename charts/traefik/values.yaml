@@ -1,13 +1,15 @@
 traefik:
+  ingressClass:
+    enabled: true
+    isDefaultClass: true
+    name: traefik
+
   providers:
     kubernetesGateway:
       enabled: true
     kubernetesIngress:
       enabled: true
       ingressClass: traefik
-      ingressClassResource:
-        enabled: true
-        isDefaultClass: true
 
   gateway:
     enabled: false
