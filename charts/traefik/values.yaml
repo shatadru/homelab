@@ -27,9 +27,8 @@ traefik:
     dashboard:
       enabled: false
 
-  logs:
-    general:
-      level: INFO
+  log:
+    level: INFO
 
   deployment:
     replicas: 1
