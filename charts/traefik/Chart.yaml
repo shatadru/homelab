@@ -1,0 +1,11 @@
+apiVersion: v2
+name: traefik-wrapper
+description: GitOps wrapper for the upstream Traefik Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=traefik registryUrl=https://traefik.github.io/charts
+dependencies:
+  - name: traefik
+    repository: https://traefik.github.io/charts
+    version: 41.0.2

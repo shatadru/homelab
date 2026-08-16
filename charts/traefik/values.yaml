@@ -1,0 +1,38 @@
+traefik:
+  providers:
+    kubernetesGateway:
+      enabled: true
+    kubernetesIngress:
+      enabled: true
+      ingressClass: traefik
+      ingressClassResource:
+        enabled: true
+        isDefaultClass: true
+
+  gateway:
+    enabled: false
+
+  service:
+    type: LoadBalancer
+    annotations:
+      metallb.io/ip-allocated-from-pool: homelab
+
+  ports:
+    web:
+      port: 80
+      exposedPort: 80
+      protocol: TCP
+
+  api:
+    dashboard: true
+    insecure: false
+
+  ingressRoute:
+    dashboard:
+      enabled: false
+
+  log:
+    level: INFO
+
+  deployment:
+    replicas: 1
