@@ -1,0 +1,12 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended"],
+  "enabledManagers": [
+    "helmv3",
+    "helm-values",
+    "docker"
+  ],
+  "dependencyDashboard": false,
+  "automerge": false,
+  "prCreation": "immediate"
+}
