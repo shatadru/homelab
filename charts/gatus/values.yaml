@@ -2,7 +2,7 @@ gatus:
   ingress:
     enabled: true
     hosts:
-      - gatus.homelab
+      - gatus.home.shatadru.in
 
   serviceMonitor:
     enabled: true
