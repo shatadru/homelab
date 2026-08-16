@@ -16,9 +16,14 @@ spec:
     targetRevision: 10.3.2
     helm:
       values: |
+        configs:
+          params:
+            server.insecure: true
+
         server:
           ingress:
             enabled: true
+            ingressClassName: traefik
             tls: true
             hostname: argocd.home.shatadru.in
 
