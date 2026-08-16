@@ -1,0 +1,11 @@
+apiVersion: v2
+name: gatus-wrapper
+description: GitOps wrapper for the upstream Gatus Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=gatus registryUrl=https://twin.github.io/helm-charts
+dependencies:
+  - name: gatus
+    repository: https://twin.github.io/helm-charts
+    version: 1.5.0

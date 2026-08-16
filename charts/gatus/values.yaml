@@ -1,0 +1,33 @@
+gatus:
+  ingress:
+    enabled: true
+    hosts:
+      - gatus.homelab
+
+  serviceMonitor:
+    enabled: true
+    interval: 60s
+    scrapeTimeout: 30s
+
+  config:
+    endpoints:
+      - name: Immich
+        group: apps
+        url: https://photos.shatadru.in
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
+
+      - name: shatadru.in
+        group: websites
+        url: https://shatadru.in
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
+
+      - name: sonalstudio.in
+        group: websites
+        url: https://sonalstudio.in/
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"
