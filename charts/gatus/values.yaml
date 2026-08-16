@@ -4,10 +4,6 @@ gatus:
     hosts:
       - gatus.homelab
 
-  persistence:
-    enabled: true
-    size: 200Mi
-
   serviceMonitor:
     enabled: true
     interval: 60s
