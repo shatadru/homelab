@@ -11,9 +11,9 @@ spec:
     namespace: gatus
 
   source:
-    repoURL: https://github.com/shatadru/homelab.git
+    repoURL: git@github.com:shatadru/homelab.git
     path: charts/gatus
-    targetRevision: feat/add-gatus
+    targetRevision: main
 
   syncPolicy:
     automated:
