@@ -1,0 +1,42 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: gatus
+  namespace: argocd
+spec:
+  project: default
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: gatus
+
+  source:
+    repoURL: https://twin.github.io/helm-charts
+    chart: gatus
+    targetRevision: 1.5.0
+    helm:
+      values: |
+        ingress:
+          enabled: true
+          hosts:
+            - gatus.homelab
+
+        persistence:
+          enabled: true
+          size: 200Mi
+
+        config:
+          endpoints:
+            - name: GitHub
+              url: https://github.com
+              interval: 60s
+              conditions:
+                - "[STATUS] == 200"
+
+  syncPolicy:
+    automated:
+      enabled: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
