@@ -1,0 +1,11 @@
+apiVersion: v2
+name: argocd-wrapper
+description: GitOps wrapper for the upstream Argo CD Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=argo-cd registryUrl=https://argoproj.github.io/argo-helm
+dependencies:
+  - name: argo-cd
+    repository: https://argoproj.github.io/argo-helm
+    version: 10.3.2

@@ -11,36 +11,9 @@ spec:
     namespace: argocd
 
   source:
-    repoURL: https://argoproj.github.io/argo-helm
-    chart: argo-cd
-    targetRevision: 10.3.2
-    helm:
-      values: |
-        configs:
-          params:
-            server.insecure: true
-
-        server:
-          ingress:
-            enabled: true
-            ingressClassName: traefik
-            tls: true
-            hostname: argocd.home.shatadru.in
-
-        controller:
-          metrics:
-            serviceMonitor:
-              enabled: false
-
-        repoServer:
-          metrics:
-            serviceMonitor:
-              enabled: false
-
-        applicationSet:
-          metrics:
-            serviceMonitor:
-              enabled: false
+    repoURL: git@github.com:shatadru/homelab.git
+    path: charts/argocd
+    targetRevision: main
 
   syncPolicy:
     automated:
