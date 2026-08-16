@@ -5,6 +5,9 @@ traefik:
     kubernetesIngress:
       enabled: true
       ingressClass: traefik
+      ingressClassResource:
+        enabled: true
+        isDefaultClass: true
 
   gateway:
     enabled: false
