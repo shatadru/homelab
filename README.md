@@ -1,79 +1,72 @@
 # HOMELAB
 
-Self-hosted infrastructure running on a Minisforum MS-A2, built around K3s, Cilium, Argo CD and GitOps.
+Self-hosted infrastructure on a **Minisforum MS-A2**, evolving from Podman workloads into a small, GitOps-managed Kubernetes platform.
 
 [![Super-Linter](https://github.com/shatadru/homelab/actions/workflows/super-linter.yml/badge.svg)](https://github.com/shatadru/homelab/actions/workflows/super-linter.yml)
+[![Renovate](https://img.shields.io/badge/renovate-enabled-1a1f6c?logo=renovate)](https://github.com/shatadru/homelab/blob/main/renovate.json)
 
-## Overview
+## Architecture
 
-The project is an incremental migration from Podman-hosted services to a small, GitOps-managed Kubernetes platform.
+```mermaid
+graph TD
+    G[GitHub] --> A[Argo CD]
+    A --> I[Infrastructure]
+    A --> W[Workloads]
 
-```text
-Home LAN
-   │
-   ▼
-MetalLB (LAN VIP)
-   │
-   ▼
-Traefik
-   │
-   ▼
-Kubernetes Ingress
-   │
-   ▼
-Service → Pod
-   │
-   ▼
-Cilium
+    subgraph K[K3s — single node]
+        C[Cilium]
+        GW[Gateway API / Ingress]
+        P[Platform Services]
+        C --> GW
+        GW --> P
+        GW --> W
+    end
+
+    I --> K
+
+    T[Tailscale] --> GW
+    L[Home LAN] --> GW
+    N[Asustor NAS / NFS] --> W
+    S[Local SSD] --> P
+
+    X[Existing Podman Workloads] -. migration .-> W
 ```
 
-For remote access, selected services can use Tailscale, while the existing Cloudflare/Tailscale path is retained for public services such as Immich.
+The platform uses **Cilium** for networking and policy, **Argo CD** for GitOps, and **Tailscale** for selected remote access. Public services such as Immich retain the existing Cloudflare/Tailscale path while migration is in progress.
 
 ## Stack
 
-| Layer | Technology |
+| Area | Technology |
 | --- | --- |
-| Host | Minisforum MS-A2 / Fedora Linux |
+| Host | Minisforum MS-A2 · Fedora Linux |
 | Kubernetes | K3s |
-| Networking & Policy | Cilium + Hubble |
+| Networking | Cilium · Hubble |
 | GitOps | Argo CD |
-| L7 Ingress | Traefik |
-| Load Balancing | MetalLB |
+| Ingress | Gateway API · Cilium |
+| Remote access | Tailscale Operator |
 | TLS | cert-manager |
-| PostgreSQL | CloudNativePG |
-| Monitoring | Prometheus / Grafana / Alertmanager |
+| Database | CloudNativePG |
+| Observability | Prometheus · Grafana · Alertmanager |
 | Uptime | Gatus |
-| Remote Access | Tailscale Operator |
-| Dashboard | Homarr |
-| Automation | Ansible / Renovate / GitHub Actions |
+| Automation | Ansible · Renovate · GitHub Actions |
 
-## Repository
+## Repository Layout
 
 ```text
 homelab/
 ├── ansible/       # host and K3s automation
-├── apps/          # Argo CD Applications
-├── bootstrap/     # initial cluster/bootstrap configuration
-├── charts/        # local Helm wrapper charts
-├── clusters/      # cluster-level App-of-Apps definitions
-└── docs/          # project documentation
+├── apps/          # Argo CD applications
+├── bootstrap/     # initial/recovery configuration
+├── charts/        # local Helm charts
+├── clusters/      # cluster-level GitOps configuration
+└── docs/          # documentation
 ```
 
-The repository follows a simple GitOps model:
+`bootstrap/` establishes the base platform. `apps/` and `clusters/` define the desired runtime state managed by Argo CD.
 
-```text
-clusters/production
-        │
-        ├── infra.yaml ──────► apps/infra
-        │
-        └── workloads.yaml ──► apps/workloads
-```
+## Workloads
 
-`bootstrap/` is used for initial/recovery setup; steady-state infrastructure and workloads are managed through Argo CD.
-
-## Current Workloads
-
-Existing services are being migrated incrementally from Podman to Kubernetes.
+The current migration includes:
 
 - Immich
 - Firecrawl
@@ -81,56 +74,23 @@ Existing services are being migrated incrementally from Podman to Kubernetes.
 - Hermes
 - Open WebUI
 
-Migration is deliberately conservative: existing state is inventoried and backed up before cutover, with the old deployment retained until the Kubernetes replacement is validated.
+Stateful workloads are migrated incrementally with backup, validation and rollback in mind. Existing Podman services remain in place until their Kubernetes replacements are proven.
 
 ## Storage
 
-The storage model is intentionally split by workload:
+- **Local SSD** — PostgreSQL, Redis and latency-sensitive state
+- **Asustor NAS / NFS** — durable shared data and large media such as the Immich library
 
-- **Local SSD** — databases and latency-sensitive state
-- **Asustor NAS / NFS** — large durable media such as the Immich library
+The cluster is intentionally **single-node** for now.
 
-The current Kubernetes cluster is single-node, so node-local storage is accepted for now.
+## CI & Dependency Management
 
-## CI & Automation
-
-Repository hygiene and dependency maintenance are automated with:
-
-- **GitHub Actions** — Super-Linter
-- **Renovate** — Helm chart and Helm values updates
-- **Ansible** — host/K3s bootstrap automation
-
-Renovate PRs are created without automerge so infrastructure upgrades remain deliberate.
-
-## Architecture
-
-The current architecture is intentionally small and modular:
-
-```text
-                     GitHub
-                        │
-                        ▼
-                     Argo CD
-                  ┌─────┴─────┐
-                  │           │
-                Infra     Workloads
-                  │           │
-                  ▼           ▼
-        Cilium / Traefik   Applications
-        MetalLB / CNPG
-        Monitoring / TLS
-                  │
-                  ▼
-              K3s Cluster
-                  │
-        ┌─────────┴─────────┐
-        ▼                   ▼
-     Local SSD          Asustor NAS
-                         (NFS)
-```
+- **GitHub Actions** runs Super-Linter.
+- **Renovate** tracks Helm charts and Helm values.
+- Dependency updates are opened as PRs rather than automatically merged.
 
 ## Status
 
-The platform foundation is operational. Current focus is on storage readiness, network policies, ingress validation and safe workload migration.
+The Kubernetes foundation is operational. Current work is focused on Gateway API validation, storage readiness, network policies and safe workload migration.
 
-> This is a personal homelab project focused on learning, automation, reliability and incremental infrastructure design.
+> Personal homelab focused on learning, automation, reliability and pragmatic infrastructure design.
