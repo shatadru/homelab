@@ -15,24 +15,23 @@ graph TD
 
     subgraph K[K3s — single node]
         C[Cilium]
-        GW[Gateway API / Ingress]
-        P[Platform Services]
-        C --> GW
-        GW --> P
-        GW --> W
+        T[Traefik]
+        S[Kubernetes Services]
+        P[Pods / Workloads]
+        C --> T --> S --> P
     end
 
     I --> K
-
-    T[Tailscale] --> GW
-    L[Home LAN] --> GW
-    N[Asustor NAS / NFS] --> W
-    S[Local SSD] --> P
+    W --> P
+    L[Home LAN] --> T
+    R[Tailscale] --> P
+    N[Asustor NAS / NFS] --> P
+    D[Local SSD] --> P
 
     X[Existing Podman Workloads] -. migration .-> W
 ```
 
-The platform uses **Cilium** for networking and policy, **Argo CD** for GitOps, and **Tailscale** for selected remote access. Public services such as Immich retain the existing Cloudflare/Tailscale path while migration is in progress.
+**Cilium** provides networking, policy and Hubble observability. **Traefik** provides L7 ingress, while **Argo CD** manages the desired state through GitOps. Tailscale is used for selected remote access.
 
 ## Stack
 
@@ -40,14 +39,16 @@ The platform uses **Cilium** for networking and policy, **Argo CD** for GitOps, 
 | --- | --- |
 | Host | Minisforum MS-A2 · Fedora Linux |
 | Kubernetes | K3s |
-| Networking | Cilium · Hubble |
+| Networking & Policy | Cilium · Hubble |
 | GitOps | Argo CD |
-| Ingress | Gateway API · Cilium |
-| Remote access | Tailscale Operator |
+| Ingress | Traefik · Kubernetes Ingress |
+| Load Balancing | MetalLB |
+| Remote Access | Tailscale Operator |
 | TLS | cert-manager |
 | Database | CloudNativePG |
 | Observability | Prometheus · Grafana · Alertmanager |
 | Uptime | Gatus |
+| Dashboard | Homarr |
 | Automation | Ansible · Renovate · GitHub Actions |
 
 ## Repository Layout
@@ -66,7 +67,7 @@ homelab/
 
 ## Workloads
 
-The current migration includes:
+Existing services are being migrated incrementally from Podman to Kubernetes:
 
 - Immich
 - Firecrawl
@@ -74,7 +75,7 @@ The current migration includes:
 - Hermes
 - Open WebUI
 
-Stateful workloads are migrated incrementally with backup, validation and rollback in mind. Existing Podman services remain in place until their Kubernetes replacements are proven.
+Stateful workloads are migrated with backup, validation and rollback in mind. Existing Podman services remain in place until their Kubernetes replacements are proven.
 
 ## Storage
 
@@ -91,6 +92,6 @@ The cluster is intentionally **single-node** for now.
 
 ## Status
 
-The Kubernetes foundation is operational. Current work is focused on Gateway API validation, storage readiness, network policies and safe workload migration.
+The Kubernetes foundation is operational. Current work is focused on storage readiness, network policies, ingress validation and safe workload migration.
 
 > Personal homelab focused on learning, automation, reliability and pragmatic infrastructure design.
