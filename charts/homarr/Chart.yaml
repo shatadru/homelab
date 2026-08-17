@@ -1,0 +1,11 @@
+apiVersion: v2
+name: homarr-wrapper
+description: GitOps wrapper for the upstream Homarr Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=homarr registryUrl=https://homarr-labs.github.io/charts
+dependencies:
+  - name: homarr
+    repository: https://homarr-labs.github.io/charts
+    version: 8.24.0
