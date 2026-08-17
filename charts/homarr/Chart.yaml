@@ -8,4 +8,4 @@ version: 0.1.0
 dependencies:
   - name: homarr
     repository: https://homarr-labs.github.io/charts
-    version: 8.24.0
+    version: 8.27.0
