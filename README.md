@@ -1,6 +1,6 @@
 # HOMELAB
 
-Self-hosted infrastructure on a **Minisforum MS-A2**, evolving from Podman workloads into a small, GitOps-managed Kubernetes platform.
+A self-hosted infrastructure platform built around Kubernetes, GitOps, and declarative configuration.
 
 [![Super-Linter](https://github.com/shatadru/homelab/actions/workflows/super-linter.yml/badge.svg)](https://github.com/shatadru/homelab/actions/workflows/super-linter.yml)
 [![Renovate](https://img.shields.io/badge/renovate-enabled-1a1f6c?logo=renovate)](https://github.com/shatadru/homelab/blob/main/renovate.json)
@@ -9,41 +9,40 @@ Self-hosted infrastructure on a **Minisforum MS-A2**, evolving from Podman workl
 
 ```mermaid
 graph TD
-    G[GitHub] --> A[Argo CD]
+    G[Git Repository] --> A[Argo CD]
     A --> I[Infrastructure]
     A --> W[Workloads]
 
-    subgraph K[K3s — single node]
+    subgraph K[Kubernetes Cluster]
         C[Cilium]
-        GW[Gateway API / Ingress]
-        P[Platform Services]
-        C --> GW
-        GW --> P
-        GW --> W
+        LB[Load Balancer]
+        T[Ingress]
+        S[Services]
+        P[Applications]
+        C --> T
+        LB --> T
+        T --> S --> P
     end
 
     I --> K
-
-    T[Tailscale] --> GW
-    L[Home LAN] --> GW
-    N[Asustor NAS / NFS] --> W
-    S[Local SSD] --> P
-
-    X[Existing Podman Workloads] -. migration .-> W
+    W --> P
+    N[Network Storage] --> P
+    D[Persistent Storage] --> P
+    R[Remote Access] --> P
 ```
 
-The platform uses **Cilium** for networking and policy, **Argo CD** for GitOps, and **Tailscale** for selected remote access. Public services such as Immich retain the existing Cloudflare/Tailscale path while migration is in progress.
+The platform uses **Argo CD** to reconcile desired state from Git. **Cilium** provides networking, policy, and observability, while an ingress layer exposes services. Persistent data is managed separately from application workloads.
 
 ## Stack
 
 | Area | Technology |
 | --- | --- |
-| Host | Minisforum MS-A2 · Fedora Linux |
 | Kubernetes | K3s |
-| Networking | Cilium · Hubble |
+| Networking & Policy | Cilium · Hubble |
 | GitOps | Argo CD |
-| Ingress | Gateway API · Cilium |
-| Remote access | Tailscale Operator |
+| Ingress | Traefik · Kubernetes Ingress |
+| Load Balancing | MetalLB |
+| Remote Access | Tailscale Operator |
 | TLS | cert-manager |
 | Database | CloudNativePG |
 | Observability | Prometheus · Grafana · Alertmanager |
@@ -54,43 +53,33 @@ The platform uses **Cilium** for networking and policy, **Argo CD** for GitOps, 
 
 ```text
 homelab/
-├── ansible/       # host and K3s automation
+├── ansible/       # automation
 ├── apps/          # Argo CD applications
-├── bootstrap/     # initial/recovery configuration
-├── charts/        # local Helm charts
-├── clusters/      # cluster-level GitOps configuration
+├── bootstrap/     # cluster bootstrap
+├── charts/        # Helm charts
+├── clusters/      # GitOps configuration
 └── docs/          # documentation
 ```
 
-`bootstrap/` establishes the base platform. `apps/` and `clusters/` define the desired runtime state managed by Argo CD.
+## GitOps
 
-## Workloads
+Infrastructure and workloads are defined declaratively and reconciled through Argo CD.
 
-The current migration includes:
-
-- Immich
-- Firecrawl
-- SearXNG
-- Hermes
-- Open WebUI
-
-Stateful workloads are migrated incrementally with backup, validation and rollback in mind. Existing Podman services remain in place until their Kubernetes replacements are proven.
+- Changes are reviewed through Git pull requests.
+- Helm-based applications are managed from version-controlled configuration.
+- Renovate keeps dependencies and chart versions up to date.
+- GitHub Actions provides automated repository checks.
 
 ## Storage
 
-- **Local SSD** — PostgreSQL, Redis and latency-sensitive state
-- **Asustor NAS / NFS** — durable shared data and large media such as the Immich library
+Storage is treated independently from application deployment:
 
-The cluster is intentionally **single-node** for now.
+- Persistent storage for stateful workloads
+- Network storage for shared or large data
+- Application configuration remains declarative and version controlled
 
-## CI & Dependency Management
+## Applications
 
-- **GitHub Actions** runs Super-Linter.
-- **Renovate** tracks Helm charts and Helm values.
-- Dependency updates are opened as PRs rather than automatically merged.
+The platform provides a consistent way to deploy and operate self-hosted applications with common networking, storage, security, and observability patterns.
 
-## Status
-
-The Kubernetes foundation is operational. Current work is focused on Gateway API validation, storage readiness, network policies and safe workload migration.
-
-> Personal homelab focused on learning, automation, reliability and pragmatic infrastructure design.
+> A practical homelab for learning, automation, reliability, and modern infrastructure practices.
