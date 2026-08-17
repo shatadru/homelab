@@ -2,28 +2,28 @@ homarr:
   enableKubernetes: true
   authProviders: credentials
 
-rbac:
-  enabled: true
+  service:
+    enabled: true
 
-service:
-  enabled: true
+  rbac:
+    enabled: true
 
-ingress:
-  enabled: true
-  ingressClassName: traefik
-  annotations:
-    cert-manager.io/cluster-issuer: homelab-selfsigned
-  hosts:
-    - host: homarr.home.shatadru.in
-      paths:
-        - path: /
-          pathType: Prefix
-  tls:
-    - secretName: homarr-tls
-      hosts:
-        - homarr.home.shatadru.in
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-selfsigned
+    hosts:
+      - host: homarr.home.shatadru.in
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: homarr-tls
+        hosts:
+          - homarr.home.shatadru.in
 
-# Persistence is intentionally disabled until the homelab StorageClass is available.
-persistence:
-  homarrDatabase:
-    enabled: false
+  # Persistence is intentionally disabled until the homelab StorageClass is available.
+  persistence:
+    homarrDatabase:
+      enabled: false
