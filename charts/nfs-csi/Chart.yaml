@@ -1,0 +1,11 @@
+apiVersion: v2
+name: nfs-csi-wrapper
+description: GitOps wrapper for the upstream NFS CSI driver Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=csi-driver-nfs registryUrl=https://kubernetes-csi.github.io/csi-driver-nfs
+dependencies:
+  - name: csi-driver-nfs
+    repository: https://kubernetes-csi.github.io/csi-driver-nfs
+    version: 4.13.4
