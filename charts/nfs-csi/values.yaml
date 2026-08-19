@@ -1,1 +1,12 @@
 csi-driver-nfs: {}
+
+storageClass:
+  enabled: true
+  name: nas-nfs
+  server: 192.168.100.2
+  share: /volume1/k8s
+  mountPermissions: "0755"
+  reclaimPolicy: Delete
+  volumeBindingMode: Immediate
+  mountOptions:
+    - nfsvers=3
