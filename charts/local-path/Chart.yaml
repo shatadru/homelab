@@ -1,0 +1,12 @@
+---
+apiVersion: v2
+name: local-path-wrapper
+description: GitOps wrapper for the Rancher local-path-provisioner Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=local-path-provisioner registryUrl=https://charts.rancher.com/server-charts/stable
+dependencies:
+  - name: local-path-provisioner
+    repository: https://charts.rancher.com/server-charts/stable
+    version: 0.0.37
