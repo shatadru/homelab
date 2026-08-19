@@ -1,0 +1,8 @@
+---
+local-path-provisioner:
+  storageClass:
+    name: local-path
+    defaultClass: false
+    reclaimPolicy: Delete
+    volumeBindingMode: WaitForFirstConsumer
+    path: /var/lib/rancher/k3s/storage
