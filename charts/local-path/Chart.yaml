@@ -9,4 +9,4 @@ version: 0.1.0
 dependencies:
   - name: local-path-provisioner
     repository: https://charts.rancher.com/server-charts/stable
-    version: 0.0.32
+    version: 0.0.37
