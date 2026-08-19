@@ -6,7 +6,7 @@ storageClass:
   server: 192.168.100.2
   share: /volume1/k8s
   mountPermissions: "0755"
-  reclaimPolicy: Delete
-  volumeBindingMode: Immediate
+  reclaimPolicy: Retain
+  volumeBindingMode: WaitForFirstConsumer
   mountOptions:
     - nfsvers=3
