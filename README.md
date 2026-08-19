@@ -31,7 +31,17 @@ graph TD
     R[Remote Access] --> P
 ```
 
-The platform uses **Argo CD** to reconcile desired state from Git. **Cilium** provides networking, policy, and observability, while an ingress layer exposes services. Persistent data is managed separately from application workloads.
+The platform uses **Argo CD** to reconcile desired state from Git. It uses App of App concepts to divide k8s workload in Infra Structure application and Workloads.
+- **Cilium** provides networking
+- **Cert-Manager** provides certs
+-  **Metal-LB** is for provisioning IP on baremetal
+-  Monitoring provided by **kube-prometheus-stack** which in turns provide *Prometheus*, *Grafana* and *Alert Manager*.
+-  **Gatus** provides synthetic uptime monitoring
+-  Traefik provides ingress controller for internal apps
+-  Persistent data is provided by **nfs-csi** connecting to a NAS box
+- **Tailscale Operator** exposes services to internal tailnet
+- **CNPG** provides cloudnative PostgreSQL operator to run Postgres DB
+- The repository is connected and configured with Rennovate to propose PR to above charts.
 
 ## Stack
 
