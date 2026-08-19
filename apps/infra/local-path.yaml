@@ -7,9 +7,20 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: git@github.com:shatadru/homelab.git
-    path: charts/local-path
-    targetRevision: main
+    repoURL: https://github.com/rancher/local-path-provisioner.git
+    path: deploy/chart/local-path-provisioner
+    targetRevision: v0.0.36
+    helm:
+      valuesObject:
+        storageClass:
+          defaultClass: false
+          name: local-path
+          reclaimPolicy: Delete
+          volumeBindingMode: WaitForFirstConsumer
+        nodePathMap:
+          - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+            paths:
+              - /var/lib/rancher/k3s/storage
   destination:
     server: https://kubernetes.default.svc
     namespace: local-path-storage
