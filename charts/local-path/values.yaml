@@ -5,4 +5,7 @@ local-path-provisioner:
     defaultClass: false
     reclaimPolicy: Delete
     volumeBindingMode: WaitForFirstConsumer
-    path: /var/lib/rancher/k3s/storage
+  nodePathMap:
+    - node: DEFAULT_PATH_FOR_NON_LISTED_NODES
+      paths:
+        - /var/lib/rancher/k3s/storage
