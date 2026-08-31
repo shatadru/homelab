@@ -1,0 +1,52 @@
+immich:
+  controllers:
+    main:
+      pod:
+        securityContext:
+          fsGroup: 1001
+      containers:
+        main:
+          securityContext:
+            runAsUser: 1001
+            runAsGroup: 1001
+          image:
+            tag: v3.1.0
+          env:
+            DB_HOSTNAME: immich-postgres-rw.immich.svc.cluster.local
+            DB_USERNAME: immich
+            DB_DATABASE_NAME: immich
+            DB_PASSWORD:
+              valueFrom:
+                secretKeyRef:
+                  name: immich-db-credentials
+                  key: password
+
+  immich:
+    persistence:
+      library:
+        existingClaim: immich-library
+
+  valkey:
+    enabled: true
+
+  server:
+    enabled: true
+    ingress:
+      main:
+        enabled: true
+        ingressClassName: traefik
+        annotations:
+          cert-manager.io/cluster-issuer: homelab-selfsigned
+        hosts:
+          - host: immich.home.shatadru.in
+            paths:
+              - path: "/"
+                service:
+                  identifier: main
+        tls:
+          - secretName: immich-tls
+            hosts:
+              - immich.home.shatadru.in
+
+  machine-learning:
+    enabled: true
