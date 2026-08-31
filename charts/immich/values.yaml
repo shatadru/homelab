@@ -34,7 +34,7 @@ immich:
     ingress:
       main:
         enabled: true
-        ingressClassName: traefik
+        className: traefik
         annotations:
           cert-manager.io/cluster-issuer: homelab-selfsigned
         hosts:
@@ -50,7 +50,6 @@ immich:
 
       tailscale:
         enabled: true
-        primary: false
         className: tailscale
         hosts:
           - host: immich
@@ -61,5 +60,6 @@ immich:
         tls:
           - hosts:
               - immich
+
   machine-learning:
     enabled: true
