@@ -60,5 +60,6 @@ immich:
         tls:
           - hosts:
               - immich
+
   machine-learning:
     enabled: true
