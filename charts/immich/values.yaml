@@ -48,5 +48,17 @@ immich:
             hosts:
               - immich.home.shatadru.in
 
+      tailscale:
+        enabled: true
+        primary: false
+        ingressClassName: tailscale
+        tls: true
+        hosts:
+          - host: immich
+            paths:
+              - path: "/"
+                service:
+                  identifier: main
+
   machine-learning:
     enabled: true
