@@ -1,0 +1,11 @@
+apiVersion: v2
+name: immich-wrapper
+description: GitOps wrapper for the upstream Immich Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=immich registryUrl=oci://ghcr.io/immich-app/immich-charts
+dependencies:
+  - name: immich
+    repository: oci://ghcr.io/immich-app/immich-charts
+    version: 0.10.3
