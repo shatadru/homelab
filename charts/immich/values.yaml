@@ -51,14 +51,15 @@ immich:
       tailscale:
         enabled: true
         primary: false
-        ingressClassName: tailscale
-        tls: true
+        className: tailscale
         hosts:
           - host: immich
             paths:
               - path: "/"
                 service:
                   identifier: main
-
+        tls:
+          - hosts:
+              - immich
   machine-learning:
     enabled: true
