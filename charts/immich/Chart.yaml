@@ -8,4 +8,4 @@ version: 0.1.0
 dependencies:
   - name: immich
     repository: oci://ghcr.io/immich-app/immich-charts
-    version: 0.10.3
+    version: 0.13.1
