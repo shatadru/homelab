@@ -1,24 +1,13 @@
 apiVersion: v1
-kind: PersistentVolume
+kind: PersistentVolumeClaim
 metadata:
-  name: immich-library-pv
-  labels:
-    app: immich
+  name: immich-library
+  namespace: immich
 spec:
-  capacity:
-    storage: 9Ti
   accessModes:
     - ReadWriteMany
-  persistentVolumeReclaimPolicy: Retain
-  mountOptions:
-    - vers=3
-    - rsize=524288
-    - wsize=524288
-    - hard
-    - proto=tcp
-  nfs:
-    server: 192.168.100.2
-    path: /volume1/IMMICH
-  claimRef:
-    name: immich-library
-    namespace: immich
+  resources:
+    requests:
+      storage: 9Ti
+  volumeName: immich-library-pv
+  storageClassName: ""
