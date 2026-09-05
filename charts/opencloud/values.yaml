@@ -34,6 +34,17 @@ opencloud:
     # No demo users for a personal instance
     createDemoUsers: false
 
+    # Small config/metadata volume — separate from the posixfs user-data PVC
+    # below. This is app *state*, not user *data* — same category as Immich's
+    # CNPG/Valkey (local-path), not its NFS-backed library. NOTE:
+    # global.storage.storageClass is NOT read by this PVC's template (checked
+    # directly in pvc.yaml) — must be set here explicitly, or it stays
+    # unbound with "no storage class is set" since neither local-path nor
+    # nas-nfs is marked default in this cluster.
+    persistence:
+      data:
+        storageClass: local-path
+
     resources:
       requests:
         cpu: 128m
