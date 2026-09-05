@@ -73,6 +73,14 @@ opencloud:
   collabora:
     enabled: false
 
+  # `collaboration` (WOPI service) is a SEPARATE key from `collabora` (the editor
+  # itself) — deployment.yaml checks .Values.collaboration.enabled directly, and
+  # this key has NO default in the upstream chart's values.yaml at all (a gap in
+  # the chart, not something we missed). Must be set explicitly or `helm template`
+  # fails with a nil pointer on opencloud/templates/opencloud/deployment.yaml:221.
+  collaboration:
+    enabled: false
+
   # ---------------------------------------------------------------------
   # WEB EXTENSIONS / TIKA (full-text content search) — DISABLED for v1
   # ---------------------------------------------------------------------
