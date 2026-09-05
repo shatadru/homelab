@@ -9,4 +9,4 @@ storageClass:
   reclaimPolicy: Retain
   volumeBindingMode: WaitForFirstConsumer
   mountOptions:
-    - nfsvers=3
+    - nfsvers=4.2
