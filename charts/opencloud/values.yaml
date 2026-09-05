@@ -5,7 +5,15 @@
 # values must be nested one level under the `opencloud:` key below. The upstream chart
 # ALSO has its own top-level `opencloud:` section for core app settings — so that section
 # ends up double-nested as `opencloud.opencloud.*` here. This is correct, not a typo.
-# Verify with `helm template . --debug` before merging, same as Immich PR #56/#57.
+#
+# DESIGN NOTE (changed after initial draft): the chart's own "minimal setup" doc and its
+# CI-tested e2e values both keep Collabora + Tika at their default `enabled: true` — neither
+# example disables them. Disabling them (our original plan) walks into undocumented gaps
+# (missing `collaboration.enabled` default, SEARCH_EXTRACTOR_TYPE hardcoded to "tika"
+# regardless of whether tika is enabled). So this version follows the chart's tested path
+# instead: Collabora + Tika stay ON, and only the genuinely environment-specific bits
+# (storage, ingress, secrets) are overridden. Still worth a `helm template . --debug`
+# before merging, same as always.
 
 opencloud:
   # ---------------------------------------------------------------------
@@ -14,6 +22,8 @@ opencloud:
   global:
     domain:
       opencloud: cloud.home.shatadru.in
+      collabora: collabora.home.shatadru.in
+      companion: companion.home.shatadru.in
     tls:
       # We terminate TLS at Traefik (homelab-selfsigned), not inside the chart
       enabled: false
@@ -31,8 +41,13 @@ opencloud:
     # homepage-secrets. Must contain key: adminPassword
     existingSecret: opencloud-admin-credentials
 
-    # No demo users for a personal instance
-    createDemoUsers: false
+    # No demo users for a personal instance — but the chart's own minimal-setup
+    # doc notes createDemoUsers is "necessary for admin user creation" with the
+    # integrated IDM. Leaving as chart default (true) rather than guessing here;
+    # flip to false once confirmed an admin account can be created another way.
+    createDemoUsers: true
+
+    # Left at chart default ("tika") since Tika is enabled below.
 
     # Small config/metadata volume — separate from the posixfs user-data PVC
     # below. This is app *state*, not user *data* — same category as Immich's
@@ -55,10 +70,9 @@ opencloud:
 
     # -- Storage: NAS-backed posixfs, consistent with "NFS for large durable
     #    media" principle (same reasoning as Immich's library PV).
-    #    NOTE: posixfs requires NFS >= 4.2 (flock + xattr support) on the
-    #    export — confirm the nas-nfs StorageClass's NFS version before
-    #    merging; if it doesn't support flock/xattrs, fall back to
-    #    storage.mode: decomposed on local-path instead.
+    #    Requires NFS >= 4.2 with flock + xattr support — the nas-nfs
+    #    StorageClass's mountOptions must be pinned to nfsvers=4.2, not the
+    #    default nfsvers=3 (this bit us once already; confirm before reuse).
     storage:
       mode: posixfs
       posixfs:
@@ -68,7 +82,6 @@ opencloud:
           storageClass: nas-nfs
           accessMode: ReadWriteOnce   # ReadWriteMany only needed if replicas > 1
 
-    # v1 scope: pure file storage/sync/share only.
     smtp:
       enabled: false
     antivirus:
@@ -77,33 +90,40 @@ opencloud:
       enabled: false
 
   # ---------------------------------------------------------------------
-  # COLLABORA (document editing) — DISABLED for v1
+  # COLLABORA (document editing) — chart default (enabled), following the
+  # CI-tested path instead of disabling it
   # ---------------------------------------------------------------------
-  # Re-enable later if in-browser Office editing is wanted; adds a second
-  # pod + more resource overhead. Keeping the first deployment minimal.
   collabora:
-    enabled: false
+    enabled: true
+    ssl:
+      enabled: false   # TLS terminated at Traefik, same as opencloud itself
 
-  # `collaboration` (WOPI service) is a SEPARATE key from `collabora` (the editor
-  # itself) — deployment.yaml checks .Values.collaboration.enabled directly, and
-  # this key has NO default in the upstream chart's values.yaml at all (a gap in
-  # the chart, not something we missed). Must be set explicitly or `helm template`
-  # fails with a nil pointer on opencloud/templates/opencloud/deployment.yaml:221.
+  # `collaboration` (WOPI service) is a SEPARATE key from `collabora` (the
+  # editor itself) — deployment.yaml checks .Values.collaboration.enabled
+  # directly, and this key has NO default in the upstream chart's values.yaml
+  # at all (a genuine chart gap). Must be set explicitly regardless of
+  # whether collabora is on, or `helm template` fails with a nil pointer on
+  # opencloud/templates/opencloud/deployment.yaml:221. Set true since
+  # Collabora is enabled above and needs the WOPI bridge to function.
   collaboration:
-    enabled: false
+    enabled: true
 
   # ---------------------------------------------------------------------
-  # WEB EXTENSIONS / TIKA (full-text content search) — DISABLED for v1
+  # WEB EXTENSIONS / TIKA — chart defaults (enabled)
   # ---------------------------------------------------------------------
   webExtensions:
-    enabled: false
+    enabled: true
   tika:
-    enabled: false
+    enabled: true
+    resources:
+      requests:
+        cpu: 100m
 
   # ---------------------------------------------------------------------
   # INGRESS — plain Kubernetes Ingress via Traefik
   # (matches the live Immich/Homepage convention, not the chart's
-  #  Gateway API default)
+  #  Gateway API default; confirmed by the chart's own ingress_test.yaml
+  #  that plain ingress.enabled renders a real Ingress object)
   # ---------------------------------------------------------------------
   httpRoute:
     enabled: false
