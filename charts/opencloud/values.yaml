@@ -1,0 +1,102 @@
+# Wrapper values for the `opencloud` OCI dependency (Tim-herbie/opencloud-helm v3.0.0).
+#
+# IMPORTANT — matches the bjw-s/wrapper-chart lesson already learned on Immich/Homepage:
+# because the dependency is declared with `name: opencloud` in Chart.yaml, ALL of its
+# values must be nested one level under the `opencloud:` key below. The upstream chart
+# ALSO has its own top-level `opencloud:` section for core app settings — so that section
+# ends up double-nested as `opencloud.opencloud.*` here. This is correct, not a typo.
+# Verify with `helm template . --debug` before merging, same as Immich PR #56/#57.
+
+opencloud:
+  # ---------------------------------------------------------------------
+  # GLOBAL
+  # ---------------------------------------------------------------------
+  global:
+    domain:
+      opencloud: cloud.home.shatadru.in
+    tls:
+      # We terminate TLS at Traefik (homelab-selfsigned), not inside the chart
+      enabled: false
+    storage:
+      storageClass: nas-nfs
+
+  # ---------------------------------------------------------------------
+  # CORE APP SETTINGS (upstream chart's own `opencloud:` block)
+  # ---------------------------------------------------------------------
+  opencloud:
+    replicas: 1
+    logLevel: info
+
+    # Manually created secret, same pattern as immich-db-credentials /
+    # homepage-secrets. Must contain key: adminPassword
+    existingSecret: opencloud-admin-credentials
+
+    # No demo users for a personal instance
+    createDemoUsers: false
+
+    resources:
+      requests:
+        cpu: 128m
+        memory: 256Mi
+      limits:
+        cpu: "2"
+        memory: 2Gi
+
+    # -- Storage: NAS-backed posixfs, consistent with "NFS for large durable
+    #    media" principle (same reasoning as Immich's library PV).
+    #    NOTE: posixfs requires NFS >= 4.2 (flock + xattr support) on the
+    #    export — confirm the nas-nfs StorageClass's NFS version before
+    #    merging; if it doesn't support flock/xattrs, fall back to
+    #    storage.mode: decomposed on local-path instead.
+    storage:
+      mode: posixfs
+      posixfs:
+        persistence:
+          enabled: true
+          size: 200Gi          # placeholder — size to actual NAS headroom
+          storageClass: nas-nfs
+          accessMode: ReadWriteOnce   # ReadWriteMany only needed if replicas > 1
+
+    # v1 scope: pure file storage/sync/share only.
+    smtp:
+      enabled: false
+    antivirus:
+      enabled: false
+    policies:
+      enabled: false
+
+  # ---------------------------------------------------------------------
+  # COLLABORA (document editing) — DISABLED for v1
+  # ---------------------------------------------------------------------
+  # Re-enable later if in-browser Office editing is wanted; adds a second
+  # pod + more resource overhead. Keeping the first deployment minimal.
+  collabora:
+    enabled: false
+
+  # ---------------------------------------------------------------------
+  # WEB EXTENSIONS / TIKA (full-text content search) — DISABLED for v1
+  # ---------------------------------------------------------------------
+  webExtensions:
+    enabled: false
+  tika:
+    enabled: false
+
+  # ---------------------------------------------------------------------
+  # INGRESS — plain Kubernetes Ingress via Traefik
+  # (matches the live Immich/Homepage convention, not the chart's
+  #  Gateway API default)
+  # ---------------------------------------------------------------------
+  httpRoute:
+    enabled: false
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-selfsigned
+
+  # ---------------------------------------------------------------------
+  # MONITORING
+  # ---------------------------------------------------------------------
+  monitoring:
+    enabled: true

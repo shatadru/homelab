@@ -1,0 +1,10 @@
+apiVersion: v2
+name: opencloud
+description: Wrapper chart for OpenCloud (Google Drive alternative)
+type: application
+version: 0.1.0
+appVersion: "7.5.0"
+dependencies:
+  - name: opencloud
+    version: "3.0.0"
+    repository: "oci://ghcr.io/tim-herbie/opencloud-helm"
