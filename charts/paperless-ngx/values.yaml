@@ -1,0 +1,81 @@
+# Values for the CodeOpsMS Paperless-ngx chart. Since this is a wrapper chart,
+# every upstream setting is nested under `paperless-ngx`.
+paperless-ngx:
+  fullnameOverride: paperless-ngx
+
+  config:
+    # Pre-create paperless-secrets with PAPERLESS_SECRET_KEY. The database
+    # password is supplied separately by paperless-db-credentials.
+    url: https://paperless.home.shatadru.in
+    secretKey:
+      existingSecret:
+        name: paperless-secrets
+        key: PAPERLESS_SECRET_KEY
+    database:
+      engine: postgresql
+      host: paperless-postgres-rw.paperless-ngx.svc.cluster.local
+      port: 5432
+      name: paperless
+      user: paperless
+      password: ""
+      existingSecret:
+        name: paperless-db-credentials
+        passwordKey: password
+
+  env:
+    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in
+    PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.home.shatadru.in
+    PAPERLESS_TIME_ZONE: UTC
+    PAPERLESS_OCR_LANGUAGE: eng
+
+  podSecurityContext:
+    fsGroup: 1000
+
+  securityContext:
+    allowPrivilegeEscalation: false
+    capabilities:
+      drop:
+        - ALL
+    runAsNonRoot: true
+    runAsUser: 1000
+    runAsGroup: 1000
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      memory: 2Gi
+
+  persistence:
+    enabled: true
+    accessMode: ReadWriteOnce
+    size: 100Gi
+    storageClass: nas-nfs
+    retain: true
+
+  ingress:
+    enabled: true
+    className: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-selfsigned
+    hosts:
+      - host: paperless.home.shatadru.in
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: paperless-ngx-tls
+        hosts:
+          - paperless.home.shatadru.in
+
+  # Use the managed CNPG instance below instead of the chart's archived
+  # bitnamilegacy PostgreSQL dependency.
+  postgresql:
+    enabled: false
+
+  valkey:
+    internal: true
+    dataStorage:
+      className: nas-nfs
+      keepPvc: true
