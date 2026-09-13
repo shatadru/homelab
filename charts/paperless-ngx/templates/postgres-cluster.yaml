@@ -1,0 +1,33 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: paperless-postgres
+  namespace: paperless-ngx
+  annotations:
+    argocd.argoproj.io/sync-options: Prune=false
+spec:
+  instances: 1
+
+  managed:
+    roles:
+      - name: paperless
+        ensure: present
+        login: true
+        passwordSecret:
+          name: paperless-db-credentials
+
+  bootstrap:
+    initdb:
+      database: paperless
+      owner: paperless
+
+  storage:
+    size: 10Gi
+    storageClass: local-path
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 512Mi
+    limits:
+      memory: 2Gi

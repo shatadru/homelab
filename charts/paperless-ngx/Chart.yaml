@@ -1,0 +1,11 @@
+apiVersion: v2
+name: paperless-ngx-wrapper
+description: GitOps wrapper for the CodeOpsMS Paperless-ngx Helm chart
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=paperless-ngx registryUrl=https://codeopsms.github.io/paperless-ngx-helm-chart/
+dependencies:
+  - name: paperless-ngx
+    repository: https://codeopsms.github.io/paperless-ngx-helm-chart/
+    version: 0.4.0
