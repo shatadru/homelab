@@ -23,6 +23,14 @@ paperless-ngx:
         passwordKey: password
 
   env:
+    # Explicitly inject the manually managed database password. This mirrors
+    # config.database.existingSecret and avoids relying on chart branching for
+    # external database credentials.
+    PAPERLESS_DBPASS:
+      valueFrom:
+        secretKeyRef:
+          name: paperless-db-credentials
+          key: password
     PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in
     PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.home.shatadru.in
     PAPERLESS_TIME_ZONE: UTC
