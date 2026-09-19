@@ -15,6 +15,14 @@
       "rangeStrategy": "bump",
       "groupName": "immich-chart",
       "groupSlug": "immich"
+    },
+    {
+      "matchManagers": ["helm-values"],
+      "matchFileNames": ["charts/immich/values.yaml"],
+      "matchDepNames": ["immich"],
+      "description": "Auto-update Immich image tag in values.yaml",
+      "automerge": false,
+      "rangeStrategy": "minor"
     }
   ],
   "ignorePaths": [],
