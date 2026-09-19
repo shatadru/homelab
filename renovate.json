@@ -1,11 +1,22 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "enabledManagers": [
-    "helmv3",
-    "helm-values"
-  ],
+  "enabledManagers": ["helmv3", "helm-values"],
   "dependencyDashboard": false,
   "automerge": false,
-  "prCreation": "immediate"
+  "prCreation": "immediate",
+  "packageRules": [
+    {
+      "matchManagers": ["helmv3"],
+      "matchFileNames": ["charts/immich/Chart.yaml"],
+      "matchDepNames": ["immich"],
+      "description": "Auto-update Immich Helm chart dependency version",
+      "automerge": false,
+      "rangeStrategy": "bump",
+      "groupName": "immich-chart",
+      "groupSlug": "immich"
+    }
+  ],
+  "ignorePaths": [],
+  "labels": ["dependencies"]
 }
