@@ -5,6 +5,14 @@ homarr:
   rbac:
     enabled: true
 
+  resources:
+    requests:
+      cpu: 200m
+      memory: 256Mi
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
+
   service:
     enabled: true
 

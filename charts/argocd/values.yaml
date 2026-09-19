@@ -13,6 +13,14 @@ argo-cd:
   controller:
     metrics:
       serviceMonitor:
+
+  resources:
+    requests:
+      cpu: 250m
+      memory: 256Mi
+    limits:
+      cpu: "500m"
+      memory: "1Gi"
         enabled: false
 
   repoServer:

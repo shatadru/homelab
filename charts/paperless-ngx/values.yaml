@@ -45,6 +45,7 @@ paperless-ngx:
       cpu: 250m
       memory: 512Mi
     limits:
+      cpu: "500m"
       memory: 2Gi
 
   persistence:
