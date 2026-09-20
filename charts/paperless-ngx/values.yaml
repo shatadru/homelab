@@ -23,7 +23,7 @@ paperless-ngx:
         passwordKey: password
 
   env:
-    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in
+    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,*
     PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.home.shatadru.in
     PAPERLESS_TIME_ZONE: UTC
     PAPERLESS_OCR_LANGUAGE: eng
