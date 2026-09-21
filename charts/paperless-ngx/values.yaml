@@ -23,8 +23,10 @@ paperless-ngx:
         passwordKey: password
 
   env:
-    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,*
-    PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.home.shatadru.in
+    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,paperless.tail8fbf37.ts.net,*
+    # Django rejects POSTs (login, uploads) from origins not listed here, so the
+    # tailnet MagicDNS name must be included alongside the Traefik host.
+    PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.home.shatadru.in,https://paperless.tail8fbf37.ts.net
     PAPERLESS_TIME_ZONE: UTC
     PAPERLESS_OCR_LANGUAGE: eng
 

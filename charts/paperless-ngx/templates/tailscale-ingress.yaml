@@ -1,0 +1,26 @@
+# Second Ingress exposing paperless-ngx on the tailnet. The upstream chart only
+# renders a single Ingress (and its values schema rejects unknown keys), so the
+# tailnet Ingress is defined here instead of under `paperless-ngx.ingress`.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: paperless-ngx-tailscale
+  namespace: paperless-ngx
+spec:
+  ingressClassName: tailscale
+  rules:
+    - host: paperless
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: paperless-ngx
+                port:
+                  number: 80
+  # The operator provisions the MagicDNS name and its TLS cert; `hosts` only
+  # needs the short name.
+  tls:
+    - hosts:
+        - paperless
