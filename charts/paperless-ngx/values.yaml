@@ -7,6 +7,11 @@ paperless-ngx:
     # Pre-create paperless-secrets with PAPERLESS_SECRET_KEY. The database
     # password is supplied separately by paperless-db-credentials.
     url: https://paperless.home.shatadru.in
+    # The env values below are delivered via envFrom on a Secret, which
+    # Kubernetes only injects at pod start, so ArgoCD would report Synced while
+    # the pod kept serving stale config. Bump this on every env change to force
+    # a rollout (this is the chart's own rollout-revision annotation).
+    secretRevision: 1
     secretKey:
       existingSecret:
         name: paperless-secrets
@@ -23,12 +28,24 @@ paperless-ngx:
         passwordKey: password
 
   env:
-    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,paperless.tail8fbf37.ts.net,*
-    # Django rejects POSTs (login, uploads) from origins not listed here, so the
-    # tailnet MagicDNS name must be included alongside the Traefik host.
-    PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.home.shatadru.in,https://paperless.tail8fbf37.ts.net
+    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,paperless.tail8fbf37.ts.net,paperless.shatadru.in,*
+    # Django rejects POSTs (login, uploads) from origins not listed here, so
+    # every hostname users reach Paperless through needs an entry: the Traefik
+    # host, the tailnet MagicDNS name, and the public Cloudflare Tunnel host.
+    PAPERLESS_CSRF_TRUSTED_ORIGINS: https://paperless.home.shatadru.in,https://paperless.tail8fbf37.ts.net,https://paperless.shatadru.in
+    # Cloudflare Tunnel and Traefik both terminate TLS and forward plain HTTP,
+    # so Django would otherwise build http:// origins and fail the CSRF check
+    # even for hosts listed above. Trust the proxy's protocol header instead.
+    PAPERLESS_PROXY_SSL_HEADER: '["HTTP_X_FORWARDED_PROTO", "https"]'
     PAPERLESS_TIME_ZONE: UTC
     PAPERLESS_OCR_LANGUAGE: eng
+
+    # Paperless derives its worker pool from the host CPU count (16 here), not
+    # the container's CPU limit, so it oversubscribed a 1-CPU cgroup 16:1 and
+    # spent its time being throttled rather than working. Pin the pool to match
+    # the limit below.
+    PAPERLESS_TASK_WORKERS: "2"
+    PAPERLESS_THREADS_PER_WORKER: "2"
 
   podSecurityContext:
     fsGroup: 1000
@@ -42,13 +59,16 @@ paperless-ngx:
     runAsUser: 1000
     runAsGroup: 1000
 
+  # TASK_WORKERS x THREADS_PER_WORKER = 4 CPU-bound threads during OCR, so the
+  # limit has to allow 4 cores or the pool is throttled again. The node has 16
+  # cores and was running at ~0.05 of them, so there is ample headroom.
   resources:
     requests:
-      cpu: 250m
-      memory: 512Mi
+      cpu: 500m
+      memory: 1Gi
     limits:
-      cpu: "1000m"
-      memory: "2Gi"
+      cpu: "4000m"
+      memory: "4Gi"
 
   persistence:
     enabled: true
