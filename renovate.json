@@ -33,6 +33,14 @@
       "rangeStrategy": "bump",
       "groupName": "paperless-ngx-chart",
       "groupSlug": "paperless-ngx"
+    },
+    {
+      "matchManagers": ["helm-values"],
+      "matchFileNames": ["charts/paperless-ngx/values.yaml"],
+      "matchDepNames": ["paperless-ngx"],
+      "description": "Auto-update Paperless-NGX image tag in values.yaml",
+      "automerge": false,
+      "rangeStrategy": "minor"
     }
   ],
   "ignorePaths": [],
