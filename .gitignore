@@ -19,6 +19,12 @@ tmp/
 .tmp/
 *.tmp
 
+# Database dumps and generated inventory reports (see immich-inven.sh)
+*.sql
+*.sql.gz
+immich_backup_*
+immich_inventory_*.md
+
 # Python tooling
 .tox/
 __pycache__/
