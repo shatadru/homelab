@@ -23,6 +23,16 @@
       "description": "Auto-update Immich image tag in values.yaml",
       "automerge": false,
       "rangeStrategy": "minor"
+    },
+    {
+      "matchManagers": ["helmv3"],
+      "matchFileNames": ["charts/paperless-ngx/Chart.yaml"],
+      "matchDepNames": ["paperless-ngx"],
+      "description": "Auto-update Paperless-NGX Helm chart dependency version",
+      "automerge": false,
+      "rangeStrategy": "bump",
+      "groupName": "paperless-ngx-chart",
+      "groupSlug": "paperless-ngx"
     }
   ],
   "ignorePaths": [],
