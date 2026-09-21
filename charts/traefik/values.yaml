@@ -16,8 +16,6 @@ traefik:
     limits:
       cpu: "200m"
       memory: "256Mi"
-    isDefaultClass: true
-    name: traefik
 
   gateway:
     enabled: false
