@@ -13,6 +13,8 @@ spec:
       - name: paperless
         ensure: present
         login: true
+        inherit: true
+        connectionLimit: -1
         passwordSecret:
           name: paperless-db-credentials
 

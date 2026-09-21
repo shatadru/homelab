@@ -20,6 +20,7 @@ spec:
         login: true
         superuser: true
         inherit: true
+        connectionLimit: -1
         passwordSecret:
           name: immich-db-credentials
 
