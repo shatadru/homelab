@@ -1,0 +1,36 @@
+---
+extends: default
+
+rules:
+  # Repo convention: most files omit the leading "---" document marker.
+  document-start: false
+
+  line-length:
+    max: 160
+    level: warning
+    allow-non-breakable-inline-mappings: true
+
+  # GitHub Actions workflows use "on:" as a mapping key.
+  truthy:
+    allowed-values: ["true", "false", "yes", "no"]
+    check-keys: false
+
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: false
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
+  braces:
+    min-spaces-inside: 0
+    max-spaces-inside: 1
+
+  brackets:
+    min-spaces-inside: 0
+    max-spaces-inside: 0
+
+ignore: |
+  .git/
+  charts/*/charts/
+  charts/*/templates/

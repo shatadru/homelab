@@ -8,9 +8,13 @@ name: Lint Code Base
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ["main"]
   pull_request:
-    branches: [ "main" ]
+    branches: ["main"]
+permissions:
+  contents: read
+  # Let super-linter post commit statuses (silences the 403 noise in logs).
+  statuses: write
 jobs:
   run-lint:
     runs-on: ubuntu-latest
@@ -28,3 +32,8 @@ jobs:
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           FILTER_REGEX_EXCLUDE: ".*charts/nfs-csi/templates/storageclass\\.yaml$"
+          # kubeval cannot validate Argo CD Custom Resources (it tries to fetch the
+          # Application schema from kubernetesjsonschema.dev, a broken host), so it
+          # fails every run on any apps/*.yaml change. Helm rendering and YAML
+          # linting for the whole repo are covered by the "Quality Checks" workflow.
+          VALIDATE_KUBERNETES_KUBEVAL: false
