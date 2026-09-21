@@ -1,7 +1,7 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": ["config:recommended"],
-  "enabledManagers": ["helmv3", "helm-values"],
+  "enabledManagers": ["helmv3", "helm-values", "dockerfile"],
   "dependencyDashboard": false,
   "automerge": false,
   "prCreation": "immediate",
@@ -21,6 +21,24 @@
       "matchFileNames": ["charts/immich/values.yaml"],
       "matchDepNames": ["immich"],
       "description": "Auto-update Immich image tag in values.yaml",
+      "automerge": false,
+      "rangeStrategy": "minor"
+    },
+    {
+      "matchManagers": ["helmv3"],
+      "matchFileNames": ["charts/paperless-ngx/Chart.yaml"],
+      "matchDepNames": ["paperless-ngx"],
+      "description": "Auto-update Paperless-NGX Helm chart dependency version",
+      "automerge": false,
+      "rangeStrategy": "bump",
+      "groupName": "paperless-ngx-chart",
+      "groupSlug": "paperless-ngx"
+    },
+    {
+      "matchManagers": ["helm-values"],
+      "matchFileNames": ["charts/paperless-ngx/values.yaml"],
+      "matchDepNames": ["paperless-ngx"],
+      "description": "Auto-update Paperless-NGX image tag in values.yaml",
       "automerge": false,
       "rangeStrategy": "minor"
     }
