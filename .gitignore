@@ -19,6 +19,17 @@ tmp/
 .tmp/
 *.tmp
 
+# Python tooling
+.tox/
+__pycache__/
+*.pyc
+
+# Helm vendored dependencies (rebuilt by `tox -e helm` / `helm dependency build`)
+charts/*/Chart.lock
+charts/*/charts/
+!charts/nfs-csi/Chart.lock
+!charts/nfs-csi/charts/
+
 # Editor / OS
 .vim/
 *.swp

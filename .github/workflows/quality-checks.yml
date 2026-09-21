@@ -1,0 +1,39 @@
+name: Quality Checks
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  helm-charts:
+    name: Helm lint & template
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          # Pinned so CI matches the version the chart tests were validated
+          # against; bump deliberately and re-run the tests.
+          version: "4.3.0"
+
+      - name: Install tox
+        run: pip install tox
+
+      - name: Test all charts
+        run: tox -e helm-charts
+
+  yamllint:
+    name: YAML lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install tox
+        run: pip install tox
+
+      - name: Lint YAML
+        run: tox -e yamllint
