@@ -16,5 +16,40 @@ cilium:
   k8sServiceHost: "192.168.0.163"
   k8sServicePort: "6443"
 
+  # cilium-agent DaemonSet resources.
+  resources:
+    requests:
+      cpu: 100m
+      memory: 256Mi
+    limits:
+      cpu: "2"
+      memory: "2Gi"
+
+  # Resources for the cilium-agent init containers that have no dedicated
+  # sizing knobs of their own (config, mount-cgroup, clean-cilium-state...).
+  initResources:
+    requests:
+      cpu: 10m
+      memory: 64Mi
+    limits:
+      cpu: "200m"
+      memory: "256Mi"
+
+  envoy:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: "1000m"
+        memory: "1Gi"
+
   operator:
     replicas: 1
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: "500m"
+        memory: "512Mi"

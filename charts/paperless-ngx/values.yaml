@@ -102,3 +102,17 @@ paperless-ngx:
     dataStorage:
       className: nas-nfs
       keepPvc: true
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+    initResources:
+      requests:
+        cpu: 10m
+        memory: 16Mi
+      limits:
+        cpu: "50m"
+        memory: "32Mi"
