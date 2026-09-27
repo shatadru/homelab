@@ -1,0 +1,15 @@
+tailscale-operator:
+  operatorConfig:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+
+  # The operator creates Tailscale ingress/egress proxy StatefulSets on demand.
+  # A default ProxyClass makes sure every proxy it creates gets resource
+  # limits instead of running unbounded.
+  proxyConfig:
+    defaultProxyClass: homelab

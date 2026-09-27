@@ -4,23 +4,83 @@ kube-prometheus-stack:
       enabled: true
       hosts:
         - alertmanager.home.shatadru.in
+    alertmanagerSpec:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 200Mi
+        limits:
+          cpu: "500m"
+          memory: "512Mi"
 
   grafana:
     ingress:
       enabled: true
-
-  resources:
-    requests:
-      cpu: 250m
-      memory: 256Mi
-    limits:
-      cpu: "500m"
-      memory: "1Gi"
       hosts:
         - grafana.home.shatadru.in
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+    sidecar:
+      resources:
+        requests:
+          cpu: 20m
+          memory: 32Mi
+        limits:
+          cpu: "100m"
+          memory: "128Mi"
 
   prometheus:
     ingress:
       enabled: true
       hosts:
         - prometheus.home.shatadru.in
+    prometheusSpec:
+      resources:
+        requests:
+          cpu: 500m
+          memory: 1Gi
+        limits:
+          cpu: "2"
+          memory: "4Gi"
+
+  # The operator also sizes the config-reloader sidecars it injects into the
+  # Prometheus and Alertmanager pods (see --config-reloader-* args).
+  prometheusOperator:
+    resources:
+      requests:
+        cpu: 100m
+        memory: 128Mi
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+    prometheusConfigReloader:
+      resources:
+        requests:
+          cpu: 20m
+          memory: 32Mi
+        limits:
+          cpu: "100m"
+          memory: "64Mi"
+
+  kube-state-metrics:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
+
+  prometheus-node-exporter:
+    resources:
+      requests:
+        cpu: 50m
+        memory: 64Mi
+      limits:
+        cpu: "200m"
+        memory: "256Mi"
