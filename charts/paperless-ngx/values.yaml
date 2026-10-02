@@ -28,7 +28,7 @@ paperless-ngx:
         passwordKey: password
 
   env:
-    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,paperless.tail8fbf37.ts.net,paperless.shatadru.in,*
+    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,paperless.tail8fbf37.ts.net,paperless.shatadru.in
     # Django rejects POSTs (login, uploads) from origins not listed here, so
     # every hostname users reach Paperless through needs an entry: the Traefik
     # host, the tailnet MagicDNS name, and the public Cloudflare Tunnel host.
@@ -40,10 +40,8 @@ paperless-ngx:
     PAPERLESS_TIME_ZONE: UTC
     PAPERLESS_OCR_LANGUAGE: eng
 
-    # Paperless derives its worker pool from the host CPU count (16 here), not
-    # the container's CPU limit, so it oversubscribed a 1-CPU cgroup 16:1 and
-    # spent its time being throttled rather than working. Pin the pool to match
-    # the limit below.
+    # Paperless sizes its worker pool from the host CPU count. Pin the pool
+    # at 2 workers and 2 threads so it matches the 4 CPU limit below.
     PAPERLESS_TASK_WORKERS: "2"
     PAPERLESS_THREADS_PER_WORKER: "2"
 
@@ -100,7 +98,9 @@ paperless-ngx:
   valkey:
     internal: true
     dataStorage:
-      className: nas-nfs
+      enabled: true
+      requestedSize: 1Gi
+      className: local-path
       keepPvc: true
     resources:
       requests:

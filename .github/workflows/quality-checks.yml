@@ -6,6 +6,10 @@ on:
   pull_request:
     branches: ["main"]
 
+concurrency:
+  group: quality-checks-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   helm-charts:
     name: Helm lint & template
@@ -37,3 +41,34 @@ jobs:
 
       - name: Lint YAML
         run: tox -e yamllint
+
+  kind-charts:
+    name: Kind chart install
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: "4.3.0"
+
+      - name: Create Kind cluster
+        uses: helm/kind-action@v1.12.0
+        with:
+          cluster_name: homelab-ci
+          node_image: kindest/node:v1.31.2
+          kubeconfig: ${{ runner.temp }}/homelab-ci.kubeconfig
+
+      - name: Install tox
+        run: pip install tox
+
+      - name: Install charts on Kind
+        env:
+          KUBECONFIG: ${{ runner.temp }}/homelab-ci.kubeconfig
+          CREATE_CLUSTER: "0"
+          DELETE_CLUSTER: "0"
+          CLUSTER_NAME: homelab-ci
+          HELM_TIMEOUT: 15m
+        run: tox -e kind-charts

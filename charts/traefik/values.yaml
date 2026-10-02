@@ -21,15 +21,24 @@ traefik:
     enabled: false
 
   service:
-    type: LoadBalancer
     annotations:
       metallb.io/ip-allocated-from-pool: homelab
+      metallb.io/loadBalancerIPs: 192.168.0.11
+    spec:
+      type: LoadBalancer
 
   ports:
     web:
-      port: 80
+      # The chart runs as a non-root user, so the process listens above 1024.
+      # The Service still publishes port 80, and that port redirects to HTTPS.
+      port: 8000
       exposedPort: 80
       protocol: TCP
+      http:
+        redirections:
+          entryPoint:
+            to: websecure
+            scheme: https
 
   api:
     dashboard: true

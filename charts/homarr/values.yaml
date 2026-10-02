@@ -1,6 +1,5 @@
 homarr:
-  enableKubernetes: true
-  authProviders: credentials
+  strategyType: Recreate
 
   rbac:
     enabled: true
@@ -31,7 +30,7 @@ homarr:
         hosts:
           - homarr.home.shatadru.in
 
-  # Persistence is intentionally disabled until the homelab StorageClass is available.
   persistence:
     homarrDatabase:
-      enabled: false
+      enabled: true
+      storageClassName: local-path

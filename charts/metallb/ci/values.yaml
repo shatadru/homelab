@@ -1,0 +1,4 @@
+# Kind has no useful L2 LAN path. Install the operator only. The pool
+# manifests need the MetalLB CRDs to already exist in the cluster.
+homelabPool:
+  enabled: false

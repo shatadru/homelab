@@ -1,0 +1,8 @@
+# Kind install keeps Argo CD reachable in-cluster only.
+# No ClusterIssuer in this job, so skip the cert-manager Certificate.
+argo-cd:
+  server:
+    ingress:
+      enabled: false
+    certificate:
+      enabled: false

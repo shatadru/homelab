@@ -4,7 +4,7 @@ metadata:
   name: paperless-postgres
   namespace: paperless-ngx
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   instances: 1
 

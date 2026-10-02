@@ -7,13 +7,17 @@
 # This configuration is intentionally suitable for the initial
 # single-node phase. Cilium provides the CNI.
 
-write-kubeconfig-mode: "0644"
+write-kubeconfig-mode: "0600"
 
 # Cilium replaces Flannel.
 flannel-backend: "none"
 
 # Cilium provides network policy.
 disable-network-policy: true
+
+# charts/cilium turns kube-proxy replacement on. Kube-proxy must already
+# be gone before that sync, or both programs will own Service traffic.
+disable-kube-proxy: true
 
 # These K3s bundled components are managed separately.
 disable:

@@ -1,0 +1,2 @@
+# Kind / CI overrides. Merged after values.yaml.
+cloudnative-pg: {}

@@ -1,0 +1,9 @@
+# Kind / CI overlays. Merged after values.yaml.
+# startupapicheck is a Helm hook Job; disable it so --wait is about Deployments.
+# The ClusterIssuer needs CRDs that are not established on the first install.
+homelabIssuer:
+  enabled: false
+
+cert-manager:
+  startupapicheck:
+    enabled: false

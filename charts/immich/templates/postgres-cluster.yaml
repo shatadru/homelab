@@ -4,7 +4,7 @@ metadata:
   name: immich-postgres
   namespace: immich
   annotations:
-    argocd.argoproj.io/sync-options: Prune=false
+    argocd.argoproj.io/sync-options: Prune=false,Delete=false
 spec:
   imageName: ghcr.io/tensorchord/cloudnative-vectorchord:17.10-1.1.1
   instances: 1
@@ -18,7 +18,7 @@ spec:
       - name: immich
         ensure: present
         login: true
-        superuser: true
+        superuser: false
         inherit: true
         connectionLimit: -1
         passwordSecret:
@@ -36,6 +36,7 @@ spec:
         - CREATE EXTENSION IF NOT EXISTS pg_trgm;
         - CREATE EXTENSION IF NOT EXISTS unaccent;
         - CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        - CREATE EXTENSION IF NOT EXISTS vchord CASCADE;
 
   storage:
     size: 10Gi

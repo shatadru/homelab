@@ -16,7 +16,7 @@
 #   RUN_LINT=0 scripts/helm-chart-test.sh
 #
 # Usually invoked through tox so local and CI run the same checks:
-#   tox                      # everything
+#   tox -e helm-charts
 #   tox -e helm-charts -- argocd   # just Helm checks for one chart
 #
 set -euo pipefail
@@ -32,7 +32,17 @@ RUN_TEMPLATE="${RUN_TEMPLATE:-1}"
 
 failures=()
 
-[[ -n "$(command -v helm)" ]] || {
+# Prefer a real Helm binary. Some developer machines wrap `helm` in a pipe
+# that always exits 0, which hides lint and template failures.
+if [[ -z "${HELM_BIN:-}" ]]; then
+  if command -v helm_actual >/dev/null 2>&1; then
+    HELM_BIN=helm_actual
+  else
+    HELM_BIN=helm
+  fi
+fi
+
+[[ -n "$(command -v "${HELM_BIN}")" ]] || {
   echo "error: helm CLI not found on PATH (install from https://helm.sh)" >&2
   exit 2
 }
@@ -67,28 +77,30 @@ check_dep_build() {
   local url name repo_err
   while IFS= read -r url; do
     [[ -z "$url" ]] && continue
+    [[ "$url" == oci://* ]] && continue
     name="auto-$(printf '%s' "$url" | md5sum | cut -c1-12)"
-    if ! repo_err="$(helm repo add "$name" "$url" 2>&1)"; then
+    if ! repo_err="$("${HELM_BIN}" repo add "$name" "$url" 2>&1)"; then
       printf '  [repo] failed to register %s: %s\n' "$url" "$repo_err"
+      return 1
     fi
   done < <(grep -E '^[[:space:]]+repository:' "$1/Chart.yaml" | awk '{print $2}' | tr -d '"')
 
-  if ! helm dependency build "$1" 2>&1; then
+  if ! "${HELM_BIN}" dependency build "$1" 2>&1; then
     printf '  [repo] hint: register the repository and retry, e.g.\n'
     printf '          helm repo add <name> <url> && helm dependency build %s\n' "$1"
     printf '          current repos: helm repo list\n'
-    helm repo list 2>&1 | sed 's/^/          /'
+    "${HELM_BIN}" repo list 2>&1 | sed 's/^/          /'
     return 1
   fi
 }
 
 check_lint() {
-  helm lint "$1"
+  "${HELM_BIN}" lint "$1"
 }
 
 check_template() {
   # Same rendering path Argo CD uses when generating manifests.
-  helm template "$1" \
+  "${HELM_BIN}" template "$1" \
     --name-template "$(basename "$1")" \
     --namespace "$NAMESPACE" \
     --include-crds >/dev/null
@@ -120,7 +132,7 @@ main() {
   }
 
   printf 'helm %s | checks: dep-build=%s lint=%s template=%s | namespace=%s\n' \
-    "$(helm version --short)" "$RUN_DEP_BUILD" "$RUN_LINT" "$RUN_TEMPLATE" "$NAMESPACE"
+    "$("${HELM_BIN}" version --short)" "$RUN_DEP_BUILD" "$RUN_LINT" "$RUN_TEMPLATE" "$NAMESPACE"
 
   while IFS= read -r chart; do
     chart_dir="$CHARTS_DIR/$chart"
@@ -128,13 +140,13 @@ main() {
     echo "== $chart =="
 
     if ((RUN_DEP_BUILD)); then
-      run_check "dependency build" check_dep_build "$chart_dir" || true
+      run_check "$chart dependency build" check_dep_build "$chart_dir" || true
     fi
     if ((RUN_LINT)); then
-      run_check "helm lint" check_lint "$chart_dir" || true
+      run_check "$chart helm lint" check_lint "$chart_dir" || true
     fi
     if ((RUN_TEMPLATE)); then
-      run_check "helm template" check_template "$chart_dir" || true
+      run_check "$chart helm template" check_template "$chart_dir" || true
     fi
   done < <(list_charts "$@")
 

@@ -27,25 +27,15 @@ The script expects the `argo-cd` Helm repository to be configured.
 
 `values.yaml` contains the minimal initial configuration.
 
-The following are intentionally not configured yet:
-
-- Tailscale ingress
-- Prometheus ServiceMonitors
-- Application workloads
-
-Those will be introduced through the GitOps-managed infrastructure layer.
+Tailscale ingress and Prometheus ServiceMonitors are still off in
+`charts/argocd`. Workloads already live under `apps/workloads`.
 
 ## GitOps
 
-After Argo CD is running, the repository will be organized around two
-primary GitOps entry points:
-
-    apps/
-    ├── infra/
-    └── workloads/
-
-Infrastructure and workload deployment will be managed declaratively
-through Argo CD.
+After Argo CD is running, apply `clusters/production/infra.yaml` and
+`clusters/production/workloads.yaml`. Those roots watch `apps/infra`
+and `apps/workloads`. This directory does not register the Git repository
+and does not install apps. The steps are in `docs/bootstrap.md`.
 
 The Argo CD bootstrap itself remains separate from those applications
 because it is required to establish the GitOps control plane.
