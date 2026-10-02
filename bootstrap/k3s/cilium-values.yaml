@@ -7,9 +7,12 @@ ipam:
       - "10.42.0.0/16"
     clusterPoolIPv4MaskSize: 24
 
-# Keep kube-proxy initially.
-# Kube-proxy replacement can be evaluated after the base cluster is stable.
-kubeProxyReplacement: "false"
+# Match charts/cilium. K3s must start with disable-kube-proxy, or both
+# programs will program Service traffic.
+kubeProxyReplacement: "true"
+# charts/cilium sets this to none. The chart default is lbipam, which
+# would hold LoadBalancer addresses until the GitOps release takes over.
+defaultLBServiceIPAM: none
 
 # K3s API server.
 k8sServiceHost: "192.168.0.163"

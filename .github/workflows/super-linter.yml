@@ -31,9 +31,10 @@ jobs:
           VALIDATE_ALL_CODEBASE: false
           DEFAULT_BRANCH: "main"
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          FILTER_REGEX_EXCLUDE: ".*charts/nfs-csi/templates/storageclass\\.yaml$"
+          # Helm templates are not plain YAML. Quality Checks covers chart render.
+          FILTER_REGEX_EXCLUDE: ".*/charts/.*/templates/.*"
           # kubeval cannot validate Argo CD Custom Resources (it tries to fetch the
           # Application schema from kubernetesjsonschema.dev, a broken host), so it
           # fails every run on any apps/*.yaml change. Helm rendering and YAML
-          # linting for the whole repo are covered by the "Quality Checks" workflow.
+          # linting for the whole repository are covered by Quality Checks.
           VALIDATE_KUBERNETES_KUBEVAL: false

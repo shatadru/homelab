@@ -1,3 +1,4 @@
+{{- if .Values.homelabPool.enabled }}
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -5,4 +6,7 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-    - 192.168.0.10-192.168.0.80
+{{- range .Values.homelabPool.addresses }}
+    - {{ . | quote }}
+{{- end }}
+{{- end }}

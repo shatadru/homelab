@@ -1,3 +1,8 @@
+homelabPool:
+  enabled: true
+  addresses:
+    - 192.168.0.10-192.168.0.80
+
 metallb:
   # This homelab uses Layer 2 advertisement only; BGP is not required.
   frrk8s:

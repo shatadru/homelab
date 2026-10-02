@@ -30,11 +30,11 @@ immich_inventory_*.md
 __pycache__/
 *.pyc
 
-# Helm vendored dependencies (rebuilt by `tox -e helm` / `helm dependency build`)
-charts/*/Chart.lock
+# Helm chart packages are rebuilt by `helm dependency build`.
+# Chart.lock stays in git so that build checks a digest.
 charts/*/charts/
-!charts/nfs-csi/Chart.lock
 !charts/nfs-csi/charts/
+!charts/paperless-ngx/charts/
 
 # Editor / OS
 .vim/

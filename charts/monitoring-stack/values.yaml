@@ -2,8 +2,15 @@ kube-prometheus-stack:
   alertmanager:
     ingress:
       enabled: true
+      ingressClassName: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: homelab-selfsigned
       hosts:
         - alertmanager.home.shatadru.in
+      tls:
+        - secretName: alertmanager-tls
+          hosts:
+            - alertmanager.home.shatadru.in
     alertmanagerSpec:
       resources:
         requests:
@@ -16,8 +23,15 @@ kube-prometheus-stack:
   grafana:
     ingress:
       enabled: true
+      ingressClassName: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: homelab-selfsigned
       hosts:
         - grafana.home.shatadru.in
+      tls:
+        - secretName: grafana-tls
+          hosts:
+            - grafana.home.shatadru.in
     resources:
       requests:
         cpu: 100m
@@ -37,8 +51,15 @@ kube-prometheus-stack:
   prometheus:
     ingress:
       enabled: true
+      ingressClassName: traefik
+      annotations:
+        cert-manager.io/cluster-issuer: homelab-selfsigned
       hosts:
         - prometheus.home.shatadru.in
+      tls:
+        - secretName: prometheus-tls
+          hosts:
+            - prometheus.home.shatadru.in
     prometheusSpec:
       resources:
         requests:

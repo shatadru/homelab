@@ -1,0 +1,18 @@
+# Kind has no LAN MetalLB VIP and no Gateway API CRDs in this job.
+# Non-root Traefik cannot bind :80/:443 inside Kind, so use high ports.
+# Traefik chart v41+ takes Service type under service.spec.type.
+traefik:
+  providers:
+    kubernetesGateway:
+      enabled: false
+  service:
+    annotations: null
+    spec:
+      type: ClusterIP
+  ports:
+    web:
+      port: 8000
+      exposedPort: 8000
+    websecure:
+      port: 8443
+      exposedPort: 8443

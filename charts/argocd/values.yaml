@@ -9,6 +9,13 @@ argo-cd:
       ingressClassName: traefik
       tls: true
       hostname: argocd.home.shatadru.in
+    certificate:
+      enabled: true
+      domain: argocd.home.shatadru.in
+      issuer:
+        group: cert-manager.io
+        kind: ClusterIssuer
+        name: homelab-selfsigned
     resources:
       requests:
         cpu: 100m

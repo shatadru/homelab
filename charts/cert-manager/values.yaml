@@ -1,3 +1,8 @@
+# ClusterIssuer is a custom resource. Keep it off for Kind's first install,
+# which applies the release before the cert-manager CRDs exist.
+homelabIssuer:
+  enabled: true
+
 cert-manager:
   crds:
     enabled: true

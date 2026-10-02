@@ -1,8 +1,15 @@
 gatus:
   ingress:
     enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-selfsigned
     hosts:
       - gatus.home.shatadru.in
+    tls:
+      - secretName: gatus-tls
+        hosts:
+          - gatus.home.shatadru.in
 
   resources:
     requests:

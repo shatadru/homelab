@@ -25,8 +25,10 @@ opencloud:
       collabora: collabora.home.shatadru.in
       companion: companion.home.shatadru.in
     tls:
-      # We terminate TLS at Traefik (homelab-selfsigned), not inside the chart
-      enabled: false
+      # Traefik terminates TLS. This flag only adds Ingress spec.tls so
+      # cert-manager can fill the secrets. It does not turn on in-pod TLS.
+      enabled: true
+      secretName: opencloud-tls
     storage:
       storageClass: nas-nfs
 
@@ -37,21 +39,17 @@ opencloud:
     replicas: 1
     logLevel: info
 
-    # Manually created secret, same pattern as immich-db-credentials /
-    # homepage-secrets. Must contain key: adminPassword
+    # Manually created secret, same pattern as immich-db-credentials.
+    # Must contain key: adminPassword
     existingSecret: opencloud-admin-credentials
 
-    # No demo users for a personal instance — but the chart's own minimal-setup
-    # doc notes createDemoUsers is "necessary for admin user creation" with the
-    # integrated IDM. Leaving as chart default (true) rather than guessing here;
-    # flip to false once confirmed an admin account can be created another way.
-    createDemoUsers: true
-
-    # Left at chart default ("tika") since Tika is enabled below.
+    # The admin account comes from IDM_ADMIN_PASSWORD. Demo users are a
+    # separate flag and publish known passwords, including dennis/demo.
+    createDemoUsers: false
 
     # Small config/metadata volume — separate from the posixfs user-data PVC
-    # below. This is app *state*, not user *data* — same category as Immich's
-    # CNPG/Valkey (local-path), not its NFS-backed library. NOTE:
+    # below. This is app state, same category as Immich Postgres on
+    # local-path. Immich Valkey stays on emptyDir. NOTE:
     # global.storage.storageClass is NOT read by this PVC's template (checked
     # directly in pvc.yaml) — must be set here explicitly, or it stays
     # unbound with "no storage class is set" since neither local-path nor
@@ -95,6 +93,9 @@ opencloud:
   # ---------------------------------------------------------------------
   collabora:
     enabled: true
+    # Secret in namespace opencloud, keys username and password.
+    # Empty existingSecret makes the chart write admin/admin.
+    existingSecret: collabora-admin-credentials
     ssl:
       enabled: false   # TLS terminated at Traefik, same as opencloud itself
 

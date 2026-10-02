@@ -1,0 +1,13 @@
+# Kind has no Prometheus Operator CRDs and no LAN ingress VIP.
+gatus:
+  ingress:
+    enabled: false
+  serviceMonitor:
+    enabled: false
+  config:
+    endpoints:
+      - name: example
+        url: https://example.com
+        interval: 60s
+        conditions:
+          - "[STATUS] == 200"

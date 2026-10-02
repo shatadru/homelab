@@ -2,7 +2,7 @@ cloudnative-pg:
   webhook:
     startupProbe:
       failureThreshold: 60
-      periodSeconds: 50
+      periodSeconds: 10
 
   resources:
     requests:

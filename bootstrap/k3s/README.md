@@ -1,9 +1,9 @@
 # K3s Bootstrap
 
-This directory contains configuration consumed by the K3s bootstrap automation.
-
-The initial K3s cluster was established manually to validate the architecture.
-The reproducible bootstrap is being implemented incrementally in `ansible/`.
+This directory contains the K3s server config and the first Cilium values.
+Ansible cannot rebuild this host. `ansible/site.yml` calls roles `base`
+and `k3s`, and those roles are not in the repository. Install K3s by hand, then
+install Cilium, then follow `docs/bootstrap.md`.
 
 ## Configuration
 
@@ -13,7 +13,7 @@ The reproducible bootstrap is being implemented incrementally in `ansible/`.
 ## Current platform
 
 - K3s `v1.36.3+k3s1`
-- Cilium `1.20.0`
+- Cilium `1.20.2`
 - Initial node: `minisforum-server`
 - Node IP: `192.168.0.163`
 
@@ -28,6 +28,4 @@ The dedicated NAS interface is not used for Kubernetes node networking.
 
 ## Automation
 
-Ansible will become the authoritative mechanism for rebuilding the host and K3s bootstrap once the currently manual procedure has been converted and validated.
-
-Applications are not bootstrapped by this layer. Once the base cluster is available, Argo CD manages infrastructure and workloads from Git.
+Applications are not bootstrapped by this layer. Once the base cluster is available, Argo CD manages infrastructure and workloads from Git. See `docs/bootstrap.md` for the install order.

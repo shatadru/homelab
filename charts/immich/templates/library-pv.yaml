@@ -19,6 +19,3 @@ spec:
   nfs:
     server: 192.168.100.2
     path: /volume1/IMMICH
-  claimRef:
-    name: immich-library
-    namespace: immich
