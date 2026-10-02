@@ -58,7 +58,7 @@ jobs:
         uses: helm/kind-action@v1.12.0
         with:
           cluster_name: homelab-ci
-          node_image: kindest/node:v1.31.2
+          node_image: kindest/node:v1.37.0
           kubeconfig: ${{ runner.temp }}/homelab-ci.kubeconfig
 
       - name: Install tox
