@@ -55,7 +55,7 @@ jobs:
           version: "4.3.0"
 
       - name: Create Kind cluster
-        uses: helm/kind-action@v1.15.0
+        uses: helm/kind-action@v1.15.1
         with:
           cluster_name: homelab-ci
           node_image: kindest/node:v1.31.2
