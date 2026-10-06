@@ -39,7 +39,9 @@ config:
 #   kubectl create secret generic labforge-agent-token \
 #     --from-literal=token="$(openssl rand -hex 32)"
 agent:
-  url: ""
+  # Loopback keeps the generic wrapper renderable for CI. Production values
+  # must override this with the reachable labforge-agent URL.
+  url: http://127.0.0.1:8443
   tokenSecretName: labforge-agent-token
   tokenKey: token
 
