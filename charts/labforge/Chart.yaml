@@ -2,8 +2,8 @@ apiVersion: v2
 name: labforge
 description: LabForge control plane (UI/API). Talks to labforge-agent on a KVM host.
 type: application
-version: 0.1.0
-appVersion: "0.1.0"
+version: 1.0.0
+appVersion: "1.0.0"
 keywords: [kvm, libvirt, lab, cloud-init, virtualization]
 home: https://github.com/OWNER/labforge
 sources:
