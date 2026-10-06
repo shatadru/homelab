@@ -1,0 +1,68 @@
+# LabForge Helm values — control plane only.
+#
+# The chart deploys MODE=control with HOST_MODE=remote. Libvirt stays on the
+# KVM host behind the labforge-agent package (.deb / .rpm). Point agent.url at
+# that agent and mount the shared token from a Secret.
+
+image:
+  repository: ghcr.io/OWNER/labforge
+  tag: "0.1.0"
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+# Control plane never shares the host network; consoles reach QEMU through the
+# agent WebSocket proxy on the KVM host.
+hostNetwork: false
+
+nodeSelector: {}
+tolerations: []
+affinity: {}
+
+service:
+  type: ClusterIP
+  port: 80
+
+# Application configuration (non secret). These become ConfigMap entries.
+config:
+  hostMode: remote
+  mode: control
+  vmNamePrefix: labs-
+  defaultMemoryMb: 1536
+  defaultVcpus: 2
+  defaultDiskGb: 30
+  resourceBudgetPercent: 50
+  graphicsType: vnc
+  logLevel: info
+
+# Reach the labforge-agent on the KVM host.
+#   kubectl create secret generic labforge-agent-token \
+#     --from-literal=token="$(openssl rand -hex 32)"
+agent:
+  url: ""
+  tokenSecretName: labforge-agent-token
+  tokenKey: token
+
+# Guest SSH public keys injected into new VMs.
+#   kubectl create secret generic labforge-ssh-keys \
+#     --from-file=authorized_keys=$HOME/.ssh/id_ed25519.pub
+sshKeys:
+  secretName: labforge-ssh-keys
+  key: authorized_keys
+
+# Optional Secret holding the Tailscale auth key file. Leave empty to disable.
+tailscale:
+  secretName: ""
+  key: auth-key
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
+
+serviceAccount:
+  create: true
+  name: ""
