@@ -1,0 +1,9 @@
+# Kind / CI overrides. Login and chat need real secrets and images, so keep
+# them off when rendering the wrapper in CI.
+labforge:
+  ingress:
+    enabled: false
+  auth:
+    enabled: false
+  chat:
+    enabled: false
