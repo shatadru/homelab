@@ -1,0 +1,44 @@
+image:
+  repository: ghcr.io/shatadru/labforge
+  tag: 1.0.0
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+hostNetwork: false
+
+service:
+  type: ClusterIP
+  port: 80
+
+config:
+  hostMode: remote
+  mode: control
+  vmNamePrefix: labs-
+  defaultMemoryMb: 1536
+  defaultVcpus: 2
+  defaultDiskGb: 30
+  resourceBudgetPercent: 50
+  graphicsType: vnc
+  logLevel: info
+
+agent:
+  url: http://192.168.0.163:8443
+  tokenSecretName: labforge-agent-token
+  tokenKey: token
+
+sshKeys:
+  secretName: labforge-ssh-keys
+  key: authorized_keys
+
+tailscale:
+  hostname: labforge
+  secretName: ""
+  key: auth-key
+
+resources:
+  requests:
+    cpu: 50m
+    memory: 128Mi
+  limits:
+    cpu: "1"
+    memory: 512Mi
