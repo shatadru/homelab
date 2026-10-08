@@ -1,10 +1,11 @@
 apiVersion: v2
-name: labforge
-description: LabForge control plane (UI/API). Talks to labforge-agent on a KVM host.
+name: labforge-wrapper
+description: GitOps wrapper for the LabForge chart (control plane, Pocket ID login, ntfy chat)
 type: application
-version: 1.0.0
-appVersion: "1.0.0"
-keywords: [kvm, libvirt, lab, cloud-init, virtualization]
-home: https://github.com/OWNER/labforge
-sources:
-  - https://github.com/OWNER/labforge
+version: 0.1.0
+
+# renovate: datasource=helm depName=labforge registryUrl=oci://ghcr.io/shatadru/charts
+dependencies:
+  - name: labforge
+    repository: oci://ghcr.io/shatadru/charts
+    version: 1.1.0

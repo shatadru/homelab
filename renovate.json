@@ -22,6 +22,16 @@
       "groupSlug": "immich"
     },
     {
+      "matchManagers": ["helmv3"],
+      "matchFileNames": ["charts/labforge/Chart.yaml"],
+      "matchDepNames": ["labforge"],
+      "description": "Auto-update the LabForge Helm chart dependency version",
+      "automerge": false,
+      "rangeStrategy": "bump",
+      "groupName": "labforge-chart",
+      "groupSlug": "labforge"
+    },
+    {
       "matchManagers": ["helm-values"],
       "matchFileNames": ["charts/immich/values.yaml"],
       "matchDepNames": ["immich-server"],

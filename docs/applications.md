@@ -27,6 +27,7 @@ Two groups: infrastructure (shared platform) and workloads (services you use).
 | paperless-ngx | `charts/paperless-ngx` | `paperless-ngx` | Documents. CNPG + nas-nfs |
 | homarr | `charts/homarr` | `homarr` | Dashboard. sqlite on local-path |
 | opencloud | `charts/opencloud` | `opencloud` | Files. nas-nfs data, local-path state |
+| labforge | `charts/labforge` | `labforge` | KVM lab control plane. Pocket ID + oauth2-proxy login, ntfy chat |
 
 ## How traffic reaches apps
 
@@ -48,11 +49,12 @@ yourself. Traefik serves `argocd.home.shatadru.in`,
 `homarr.home.shatadru.in`, `immich.home.shatadru.in`,
 `paperless.home.shatadru.in`, `cloud.home.shatadru.in`,
 `collabora.home.shatadru.in`, and `companion.home.shatadru.in`.
-Tailscale Ingress short names are `immich` and `paperless`. Paperless
-also allows `paperless.tail8fbf37.ts.net` and `paperless.shatadru.in`.
-The tunnel for `paperless.shatadru.in` is not in this repository.
-`photos.shatadru.in`, `shatadru.in`, and `sonalstudio.in` are Gatus
-checks, not Ingresses.
+`id.home.shatadru.in` is the Pocket ID LAN alias from `charts/labforge`.
+Tailscale Ingress short names are `immich`, `paperless`, `labforge`, and
+`pocket-id`. Paperless also allows `paperless.tail8fbf37.ts.net` and
+`paperless.shatadru.in`. The tunnel for `paperless.shatadru.in` is not in
+this repository. `photos.shatadru.in`, `shatadru.in`, and `sonalstudio.in`
+are Gatus checks, not Ingresses.
 
 ## Chart extras
 
@@ -60,6 +62,7 @@ A few wrappers ship more than values:
 
 - Immich: CNPG `Cluster`, library PV and PVC templates
 - Paperless: CNPG `Cluster`, Tailscale Ingress template
+- LabForge: thin wrapper over the released OCI chart (`ghcr.io/shatadru/charts/labforge`); login and chat are subcharts of that chart
 - MetalLB: `IPAddressPool` and `L2Advertisement`
 - NFS CSI: `StorageClass` named `nas-nfs`
 - Tailscale operator: default `ProxyClass` with resource limits
