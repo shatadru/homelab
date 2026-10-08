@@ -2,6 +2,13 @@ argo-cd:
   configs:
     params:
       server.insecure: true
+    secret:
+      # Let ArgoCD own argocd-secret (server.secretkey / admin.password).
+      # With the default createSecret=true the chart renders an empty
+      # argocd-secret and a self-sync wipes the runtime-generated keys, which
+      # broke the ArgoCD API (500 "server.secretkey is missing") and reset the
+      # admin password. createSecret=false leaves the secret to ArgoCD.
+      createSecret: false
 
   server:
     ingress:

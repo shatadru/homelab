@@ -17,6 +17,12 @@ cilium:
   # 1500 (physical) - 50 (VXLAN overhead) = 1450.
   MTU: 1450
 
+  # Roll the cilium-agent DaemonSet whenever cilium-config changes (e.g. MTU).
+  # The chart only adds the configmap-checksum annotation to the agent pods when
+  # this is true; with the default (false) a configmap-only change is written to
+  # the configmap but never applied until the agent is restarted by hand.
+  rollOutCiliumPods: true
+
   kubeProxyReplacement: true
   defaultLBServiceIPAM: none
   gatewayAPI:
