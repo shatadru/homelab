@@ -6,6 +6,17 @@ cilium:
         - "10.42.0.0/16"
       clusterPoolIPv4MaskSize: 24
 
+  # Cilium auto-derives the cluster/pod MTU from the node's lowest interface MTU.
+  # The host runs a kernel tailscaled whose tailscale0 has MTU 1280, which dragged
+  # the whole cluster (and every pod veth) down to 1280. That left negative headroom
+  # for the Tailscale operator's ingress proxy: its WireGuard outer packet is
+  # tailscale0(1280) + ~60B (WG/IP/UDP) = 1340, but the pod eth0 only allows 1280.
+  # With PMTUD disabled (packetization-layer-pmtud-mode: blackhole) those packets are
+  # dropped rather than fragmented, so large transfers (e.g. Immich uploads) stall
+  # while small requests/websockets keep working. Pin the MTU explicitly to
+  # 1500 (physical) - 50 (VXLAN overhead) = 1450.
+  MTU: 1450
+
   kubeProxyReplacement: true
   defaultLBServiceIPAM: none
   gatewayAPI:
