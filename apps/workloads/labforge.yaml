@@ -15,6 +15,15 @@ spec:
   destination:
     server: https://kubernetes.default.svc
     namespace: labforge
+  # The ntfy PVC is dynamically provisioned (local-path), so the API server
+  # stamps spec.volumeName on bind. That field is immutable after creation, so
+  # ArgoCD nulling it fails every sync and blocks the PostSync auth bootstrap
+  # hook (leaving oauth2-proxy without client-id/client-secret). Ignore it.
+  ignoreDifferences:
+    - group: ""
+      kind: PersistentVolumeClaim
+      jsonPointers:
+        - /spec/volumeName
   syncPolicy:
     automated:
       enabled: true
@@ -22,3 +31,4 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+      - RespectIgnoreDifferences=true
