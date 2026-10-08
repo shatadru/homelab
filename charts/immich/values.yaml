@@ -75,6 +75,14 @@ immich:
       tailscale:
         enabled: true
         className: tailscale
+        annotations:
+          # Force the Tailscale operator's L7 Ingress proxy to run in non-userspace
+          # (kernel) mode. By default the operator runs L7 Ingress proxies with
+          # userspace netstack, which caps upload throughput at ~20-45 Mbps and
+          # drops large POSTs (tailscale#20893, tailscale#15784). That broke
+          # Immich uploads (client reaches 100% then hangs; proxy logs
+          # "http: proxy error: unexpected EOF").
+          tailscale.com/experimental-forward-cluster-traffic-via-ingress: "true"
         hosts:
           - host: immich
             paths:
