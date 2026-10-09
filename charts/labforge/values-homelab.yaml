@@ -28,7 +28,7 @@ global:
 labforge:
   image:
     repository: ghcr.io/shatadru/labforge
-    # Empty tag means the chart appVersion (1.5.0).
+    # Empty tag means the chart appVersion (1.6.0).
 
   agent:
     url: http://192.168.0.163:8443
