@@ -28,7 +28,7 @@ global:
 labforge:
   image:
     repository: ghcr.io/shatadru/labforge
-    # Empty tag means the chart appVersion (1.4.0).
+    # Empty tag means the chart appVersion (1.5.0).
 
   agent:
     url: http://192.168.0.163:8443
@@ -59,17 +59,6 @@ labforge:
     provider: github
     github:
       existingSecret: labforge-github-oauth
-
-  # Workaround for chart 1.4.0: it exports the upstream as
-  # OAUTH2_PROXY_UPSTREAM (singular), but oauth2-proxy binds the env by its
-  # config key, i.e. OAUTH2_PROXY_UPSTREAMS. The unknown env is ignored, so the
-  # generated oauth2_proxy.cfg keeps the subchart default upstream
-  # (file:///dev/null) and every proxied request 404s. Supply the real upstream
-  # through that generated config instead. Drop once the chart fix is released.
-  oauth2-proxy:
-    config:
-      upstreams:
-        - http://labforge-labforge:80
 
   # One-room chat backed by ntfy (ClusterIP only).
   chat:
