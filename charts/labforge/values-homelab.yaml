@@ -7,20 +7,28 @@
 #     --from-literal=client-secret=<github-oauth-app-client-secret> \
 #     --from-literal=cookie-secret="$(openssl rand -hex 16)"
 #
-# Access is limited to global.labforge.github.org and/or .team. allowAll is a
-# temporary open setting until the GitHub org/team is configured.
+# Create the username allowlist ConfigMap (keep real usernames out of Git):
+#
+#   kubectl -n labforge create configmap labforge-github-users \
+#     --from-literal=users="<github-username>[,<another>]"
+#
+# Access is limited to the GitHub username allowlist held in the
+# `labforge-github-users` ConfigMap (key `users`, comma-separated). That
+# ConfigMap is created directly in the cluster and intentionally kept out of
+# Git. global.labforge.github.org / .team can scope access further.
 
 global:
   labforge:
     ingressHost: labforge.tail8fbf37.ts.net
     github:
-      # Temporary: any GitHub user until the org/team is set.
-      allowAll: true
+      # Restriction comes from the username allowlist ConfigMap, so keep the
+      # open catch-all off.
+      allowAll: false
 
 labforge:
   image:
     repository: ghcr.io/shatadru/labforge
-    # Empty tag means the chart appVersion (1.2.0).
+    # Empty tag means the chart appVersion (1.4.0).
 
   agent:
     url: http://192.168.0.163:8443
