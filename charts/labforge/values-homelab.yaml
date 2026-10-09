@@ -71,3 +71,12 @@ labforge:
       enabled: true
       storageClass: local-path
       size: 1Gi
+    # The LabForge backend is ntfy's only client and polls the chat card every
+    # few seconds; ntfy's default visitor bucket (60 burst, 1 refill per 5s =
+    # 12/min) throttles it with 429s, which makes the room intermittently read
+    # as empty. ntfy is ClusterIP-only here, so widen the bucket.
+    ntfy:
+      visitor:
+        request:
+          limitBurst: 1000
+          limitReplenish: 1s
