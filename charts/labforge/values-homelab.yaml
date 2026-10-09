@@ -1,22 +1,26 @@
 # Live homelab values for the LabForge stack.
 #
-# Before the first sync, create the credentials Secret in the labforge namespace:
+# Login uses GitHub OAuth (oauth2-proxy). Create the credentials Secret first:
 #
-#   kubectl -n labforge create secret generic labforge-auth \
-#     --from-literal=ENCRYPTION_KEY="$(openssl rand -base64 32)" \
-#     --from-literal=STATIC_API_KEY="$(openssl rand -hex 32)" \
-#     --from-literal=cookie-secret="$(openssl rand -base64 32)"
+#   kubectl -n labforge create secret generic labforge-github-oauth \
+#     --from-literal=client-id=<github-oauth-app-client-id> \
+#     --from-literal=client-secret=<github-oauth-app-client-secret> \
+#     --from-literal=cookie-secret="$(openssl rand -hex 16)"
+#
+# Access is limited to global.labforge.github.org and/or .team. allowAll is a
+# temporary open setting until the GitHub org/team is configured.
 
 global:
   labforge:
     ingressHost: labforge.tail8fbf37.ts.net
-    issuer: https://pocket-id.tail8fbf37.ts.net
-    lanHost: id.home.shatadru.in
+    github:
+      # Temporary: any GitHub user until the org/team is set.
+      allowAll: true
 
 labforge:
   image:
     repository: ghcr.io/shatadru/labforge
-    # Empty tag means the chart appVersion (1.1.0).
+    # Empty tag means the chart appVersion (1.2.0).
 
   agent:
     url: http://192.168.0.163:8443
@@ -41,30 +45,12 @@ labforge:
     className: tailscale
     tls: true
 
-  # Pocket ID + oauth2-proxy login.
+  # GitHub OAuth login (oauth2-proxy).
   auth:
     enabled: true
-    existingSecret: labforge-auth
-    lanClassName: traefik
-    lanClusterIssuer: homelab-selfsigned
-    bootstrap:
-      enabled: true
-
-  pocket-id:
-    host: pocket-id.tail8fbf37.ts.net
-    config:
-      core:
-        internalAppUrl: http://labforge-pocket-id:80
-      ui:
-        settings:
-          app:
-            # First signup becomes admin; set to disabled after registering.
-            allowUserSignups: open
-    persistence:
-      data:
-        enabled: true
-        storageClass: local-path
-        size: 1Gi
+    provider: github
+    github:
+      existingSecret: labforge-github-oauth
 
   # One-room chat backed by ntfy (ClusterIP only).
   chat:
