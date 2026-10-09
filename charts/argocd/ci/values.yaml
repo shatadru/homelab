@@ -1,6 +1,15 @@
 # Kind install keeps Argo CD reachable in-cluster only.
 # No ClusterIssuer in this job, so skip the cert-manager Certificate.
 argo-cd:
+  configs:
+    secret:
+      # The base values set this false so ArgoCD owns argocd-secret in the
+      # homelab (where it already exists and must not be wiped). A fresh Kind
+      # cluster has no such secret, so without it argocd-server crashloops with
+      # "server.secretkey is missing" and the install times out. Let the chart
+      # create it here.
+      createSecret: true
+
   server:
     ingress:
       enabled: false
