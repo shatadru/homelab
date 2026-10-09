@@ -7,14 +7,17 @@
 #     --from-literal=client-secret=<github-oauth-app-client-secret> \
 #     --from-literal=cookie-secret="$(openssl rand -hex 16)"
 #
-# Access is limited to global.labforge.github.org and/or .team. allowAll is a
-# temporary open setting until the GitHub org/team is configured.
+# Access is restricted to a single GitHub user via the oauth2-proxy provider
+# override below (githubConfig.users). That allowlist lives here in the homelab
+# values (local config), not in the upstream chart.
 
 global:
   labforge:
     ingressHost: labforge.tail8fbf37.ts.net
     github:
-      # Temporary: any GitHub user until the org/team is set.
+      # The chart's fail-closed check only understands org/team/allowAll; the
+      # real restriction is the githubConfig.users allowlist in the provider
+      # override below, so this stays true to satisfy the chart render check.
       allowAll: true
 
 labforge:
@@ -51,6 +54,22 @@ labforge:
     provider: github
     github:
       existingSecret: labforge-github-oauth
+
+  # Local override: allow only specific GitHub users. Replaces the chart's
+  # bundled provider block (which uses org/team) so the allowlist is config here,
+  # not code in the chart.
+  oauth2-proxy:
+    alphaConfig:
+      configData:
+        providers:
+          - id: github
+            provider: github
+            name: GitHub
+            clientID: ${OAUTH2_PROXY_CLIENT_ID}
+            clientSecret: ${OAUTH2_PROXY_CLIENT_SECRET}
+            githubConfig:
+              users:
+                - ansh5611
 
   # One-room chat backed by ntfy (ClusterIP only).
   chat:
