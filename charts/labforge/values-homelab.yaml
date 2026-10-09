@@ -60,14 +60,16 @@ labforge:
     github:
       existingSecret: labforge-github-oauth
 
-  # Workaround for chart 1.4.0: force the oauth2-proxy subchart into env-only
-  # mode so OAUTH2_PROXY_UPSTREAM is honored. Otherwise 1.4.0 generates a
-  # legacy oauth2_proxy.cfg with a file:///dev/null upstream and passes
-  # --config, so every proxied request returns 404. Drop this once the chart
-  # fix is released.
+  # Workaround for chart 1.4.0: it exports the upstream as
+  # OAUTH2_PROXY_UPSTREAM (singular), but oauth2-proxy binds the env by its
+  # config key, i.e. OAUTH2_PROXY_UPSTREAMS. The unknown env is ignored, so the
+  # generated oauth2_proxy.cfg keeps the subchart default upstream
+  # (file:///dev/null) and every proxied request 404s. Supply the real upstream
+  # through that generated config instead. Drop once the chart fix is released.
   oauth2-proxy:
     config:
-      forceLegacyConfig: false
+      upstreams:
+        - http://labforge-labforge:80
 
   # One-room chat backed by ntfy (ClusterIP only).
   chat:
