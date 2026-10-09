@@ -1,6 +1,6 @@
 dependencies:
 - name: labforge
   repository: oci://ghcr.io/shatadru/charts
-  version: 1.6.0
-digest: sha256:f92544bfc8865a9d393bfb6c853fab31bd40d55557b30e1b783249ee494494b5
-generated: "2026-10-09T23:08:50.283255519+01:00"
+  version: 1.6.1
+digest: sha256:f9571b819fcd37220a76f156f946644cf6b253cb60e974ddf105bed55fad3a4e
+generated: "2026-10-09T22:49:46.550332444Z"
