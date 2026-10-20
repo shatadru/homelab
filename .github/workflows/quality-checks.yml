@@ -22,7 +22,7 @@ jobs:
         with:
           # Pinned so CI matches the version the chart tests were validated
           # against; bump deliberately and re-run the tests.
-          version: "4.3.0"
+          version: "4.3.1"
 
       - name: Install tox
         run: pip install tox
@@ -52,7 +52,7 @@ jobs:
       - name: Install Helm
         uses: azure/setup-helm@v5
         with:
-          version: "4.3.0"
+          version: "4.3.1"
 
       - name: Create Kind cluster
         uses: helm/kind-action@v1.15.1
