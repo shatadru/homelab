@@ -11,7 +11,7 @@ paperless-ngx:
     # Kubernetes only injects at pod start, so ArgoCD would report Synced while
     # the pod kept serving stale config. Bump this on every env change to force
     # a rollout (this is the chart's own rollout-revision annotation).
-    secretRevision: 1
+    secretRevision: 2
     secretKey:
       existingSecret:
         name: paperless-secrets
@@ -28,7 +28,15 @@ paperless-ngx:
         passwordKey: password
 
   env:
-    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,paperless.tail8fbf37.ts.net,paperless.shatadru.in
+    # Kubernetes HTTP probes hit the Pod IP as the Host header, which is not a
+    # DNS name and cannot be listed in ALLOWED_HOSTS (Django has no CIDR
+    # syntax). Without the trailing "*" the startup/readiness/liveness probes
+    # get HTTP 400 "DisallowedHost" and the Pod never becomes Ready, so the
+    # Service ends up with no endpoints. The "*" keeps the kubelet probes
+    # working and is safe here because Paperless is only reachable through the
+    # Traefik/Tailscale/Cloudflare ingresses below, and PAPERLESS_URL plus
+    # CSRF_TRUSTED_ORIGINS are pinned.
+    PAPERLESS_ALLOWED_HOSTS: paperless.home.shatadru.in,paperless.tail8fbf37.ts.net,paperless.shatadru.in,*
     # Django rejects POSTs (login, uploads) from origins not listed here, so
     # every hostname users reach Paperless through needs an entry: the Traefik
     # host, the tailnet MagicDNS name, and the public Cloudflare Tunnel host.

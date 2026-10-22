@@ -15,3 +15,10 @@ argo-cd:
       enabled: false
     certificate:
       enabled: false
+
+  # ECR Public rate-limits anonymous image pulls (HTTP 429 "Data limit
+  # exceeded"), so the Kind job stalled on argo-cd-argocd-redis until the
+  # install timed out. Docker Hub serves the same image without that cap.
+  redis:
+    image:
+      repository: docker.io/library/redis
