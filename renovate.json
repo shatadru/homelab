@@ -37,7 +37,7 @@
       "matchDepNames": ["immich-server"],
       "description": "Auto-update Immich image tag in values.yaml",
       "automerge": false,
-      "rangeStrategy": "minor"
+      "rangeStrategy": "auto"
     },
     {
       "matchManagers": ["helmv3"],
