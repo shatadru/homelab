@@ -8,4 +8,4 @@ version: 0.1.0
 dependencies:
   - name: paperless-ngx
     repository: https://codeopsms.github.io/paperless-ngx-helm-chart/
-    version: 0.4.0
+    version: 0.4.1
