@@ -1,6 +1,6 @@
 dependencies:
 - name: csi-driver-nfs
   repository: https://kubernetes-csi.github.io/csi-driver-nfs
-  version: 4.13.5
-digest: sha256:4b2eff97c7d69e0a74a0aea48d46c1116e935c5ff7f83d2de7e3a416be05f2b5
-generated: "2026-10-10T13:16:58.071867993Z"
+  version: 4.13.6
+digest: sha256:3a0f4b903d0a5b2e3c7740f0bd7dbb5f8187aed0b258d75a25066a679fe65353
+generated: "2026-11-03T00:58:18.191983439Z"
