@@ -29,7 +29,9 @@ adguard-home:
     dns:
       type: ClusterIP
       loadBalancerIP: ""
-      annotations: {}
+      # Clear the homelab MetalLB annotations from values.yaml; Kind has no
+      # MetalLB and these would otherwise linger on the rendered Service.
+      annotations: null
 
   ingress:
     enabled: false
