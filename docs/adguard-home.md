@@ -80,55 +80,40 @@ dns:
   bootstrap_dns:
     - 9.9.9.9
     - 1.1.1.1
-  protection_enabled: true
-  filtering_enabled: true
-  blocking_mode: default
   cache_size: 16777216
 filtering:
   protection_enabled: true
   filtering_enabled: true
-filters:
-  - enabled: true
-    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_1.txt
-    name: AdGuard DNS filter
-    id: 1
-  - enabled: true
-    url: https://adguardteam.github.io/HostlistsRegistry/assets/filter_2.txt
-    name: AdAway Default Blocklist
-    id: 2
-querylog:
-  enabled: true
-  interval: 720h
-statistics:
-  enabled: true
-  interval: 168h
-rewrites:
-  - domain: adguard.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: argocd.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: alertmanager.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: cloud.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: collabora.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: companion.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: gatus.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: grafana.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: homarr.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: id.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: immich.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: paperless.home.shatadru.in
-    answer: 192.168.0.11
-  - domain: prometheus.home.shatadru.in
-    answer: 192.168.0.11
+  blocking_mode: default
+  # DNS rewrites live under `filtering:`. A top-level `rewrites:` key is
+  # silently ignored by AdGuard Home, which leaves local names unresolved.
+  rewrites:
+    - domain: adguard.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: argocd.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: alertmanager.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: cloud.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: collabora.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: companion.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: gatus.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: grafana.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: homarr.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: id.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: immich.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: paperless.home.shatadru.in
+      answer: 192.168.0.11
+    - domain: prometheus.home.shatadru.in
+      answer: 192.168.0.11
 schema_version: 29
 EOF
 
@@ -138,6 +123,22 @@ kubectl -n adguard-home create secret generic adguard-home-config \
 rm -f /tmp/AdGuardHome.yaml
 unset password_hash
 ```
+
+The heredoc above is **unquoted** (`<<EOF`) so the shell expands
+`${password_hash}`. A quoted heredoc (`<<'EOF'`) stores the literal text
+`${password_hash}` and every admin login then fails with 403. Verify before
+moving on:
+
+```bash
+kubectl -n adguard-home get secret adguard-home-config \
+  -o jsonpath='{.data.AdGuardHome\.yaml}' | base64 -d \
+  | grep -F '${password_hash}' && echo 'ERROR: password hash was not expanded'
+```
+
+The `copy-config` init container seeds the configuration **only when
+`/opt/adguardhome/conf/AdGuardHome.yaml` does not exist**. To re-seed after
+fixing the Secret, delete that file (or the `-conf` PVC) and restart the pod;
+query logs and statistics live on the separate `-work` PVC.
 
 ## Router and client cutover
 
