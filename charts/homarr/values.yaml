@@ -1,4 +1,9 @@
 homarr:
+  # Paused: not using Homarr right now. Scale to 0 keeps the release and its
+  # local-path PVC (sqlite) intact while running zero pods. Set back to 1 to
+  # resume. Deployment uses Recreate strategy, so the RWO PVC stays attached.
+  replicaCount: 0
+
   strategyType: Recreate
 
   rbac:
