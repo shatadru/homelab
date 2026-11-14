@@ -85,35 +85,50 @@ filtering:
   protection_enabled: true
   filtering_enabled: true
   blocking_mode: default
+  # Every rewrite needs `enabled: true`. A missing flag defaults to
+  # disabled, and the API then reports the rewrite as inactive.
   # DNS rewrites live under `filtering:`. A top-level `rewrites:` key is
   # silently ignored by AdGuard Home, which leaves local names unresolved.
   rewrites:
     - domain: adguard.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: argocd.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: alertmanager.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: cloud.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: collabora.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: companion.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: gatus.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: grafana.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: homarr.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: id.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: immich.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: paperless.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
     - domain: prometheus.home.shatadru.in
       answer: 192.168.0.11
+      enabled: true
 schema_version: 29
 EOF
 
