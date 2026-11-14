@@ -16,6 +16,7 @@ Two groups: infrastructure (shared platform) and workloads (services you use).
 | cnpg | `charts/cnpg` | `cnpg-system` | Postgres operator |
 | monitoring-stack | `charts/monitoring-stack` | `monitoring` | Prometheus, Grafana, Alertmanager |
 | gatus | `charts/gatus` | `gatus` | Synthetic uptime checks |
+| adguard-home | `charts/adguard-home` | `adguard-home` | LAN DNS, ad blocking, and local DNS rewrites |
 | tailscale-operator | `charts/tailscale-operator` | `tailscale` | Tailnet Ingress |
 | gateway-api-crds | upstream Gateway API repository | `kube-system` | Gateway API CRDs |
 
@@ -42,8 +43,10 @@ flowchart LR
   ts --> svc
 ```
 
-This repository does not create DNS. Point the LAN names below at `192.168.0.11`
-yourself. Traefik serves `argocd.home.shatadru.in`,
+AdGuard Home publishes LAN DNS on `192.168.0.53`. Configure that address as the
+router DHCP DNS server after following [the AdGuard Home runbook](adguard-home.md).
+Its DNS rewrites point the LAN names below at Traefik (`192.168.0.11`):
+`adguard.home.shatadru.in`, `argocd.home.shatadru.in`,
 `grafana.home.shatadru.in`, `prometheus.home.shatadru.in`,
 `alertmanager.home.shatadru.in`, `gatus.home.shatadru.in`,
 `homarr.home.shatadru.in`, `immich.home.shatadru.in`,

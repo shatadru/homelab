@@ -1,0 +1,11 @@
+apiVersion: v2
+name: adguard-home-wrapper
+description: GitOps wrapper for HelmForge AdGuard Home
+type: application
+version: 0.1.0
+
+# renovate: datasource=helm depName=adguard-home registryUrl=https://repo.helmforge.dev
+dependencies:
+  - name: adguard-home
+    repository: https://repo.helmforge.dev
+    version: 1.5.4

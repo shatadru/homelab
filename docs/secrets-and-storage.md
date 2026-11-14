@@ -18,6 +18,7 @@ repository.
 | `collabora-admin-credentials` | `opencloud` | Collabora | `username`, `password` |
 | `db-encryption` | `homarr` | Homarr | `db-encryption-key` |
 | `operator-oauth` | `tailscale` | Tailscale operator | `client_id`, `client_secret` |
+| `adguard-home-config` | `adguard-home` | AdGuard Home | `AdGuardHome.yaml` |
 
 The two database secrets must be type `kubernetes.io/basic-auth`. Set
 `username` to the role (`immich` or `paperless`). The app charts read the
@@ -31,6 +32,11 @@ Collabora pod stays unready. Do not put the password in values.
 Turning `createDemoUsers` off does not delete demo accounts that were
 created the first time the pod started. Remove those users in OpenCloud
 if they already exist.
+
+`adguard-home-config` contains the complete AdGuard Home configuration and its
+bcrypt admin-password verifier. Create it before the AdGuard Home Application
+syncs; its bootstrap and local-DNS rewrite instructions are in
+[`docs/adguard-home.md`](adguard-home.md). Keep it out of Git.
 
 ## TLS issuer expectation
 
