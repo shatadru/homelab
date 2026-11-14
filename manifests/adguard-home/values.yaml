@@ -8,10 +8,11 @@ config:
   # Git. It replaces the per-machine /etc/hosts entries for the homelab.
   existingSecret: adguard-home-config
 
-# Host-network pod: node port 53 belongs to systemd-resolved, so AdGuard
-# listens on 5353. The DNS Service still publishes .53:53 and forwards here.
+# Host-network pod: node port 53 belongs to systemd-resolved, and 5353 is
+# mDNS (avahi-daemon), so AdGuard listens on 5335. The DNS Service still
+# publishes .53:53 and forwards here.
 containerPorts:
-  dns: 5353
+  dns: 5335
 
 persistence:
   conf:

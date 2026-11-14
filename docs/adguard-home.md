@@ -10,7 +10,7 @@ for LAN clients.
 
 - **DNS VIP:** `192.168.0.53`, published by MetalLB on both UDP and TCP 53.
 - **DNS listener:** the pod is host-networked (required for DHCP), so AdGuard
-  listens on the node's `:5353`; the Service still publishes `:53` on the `.53`
+  listens on the node's `:5335`; the Service still publishes `:53` on the `.53`
   VIP and kube-proxy forwards to it. Node `:53` stays with `systemd-resolved`.
 - **Web UI:** `https://adguard.home.shatadru.in`, through the existing Traefik
   VIP (`192.168.0.11`).
@@ -73,10 +73,11 @@ as a buffer between the two pools.
 1. Reserve `192.168.0.53` inside the MetalLB pool (it is currently unassigned).
 2. Create the namespace and configuration Secret before Argo CD syncs the
    Application. Do not add the generated file or password hash to Git.
-3. **Set `dns.port: 5353` in the Secret *and* in the live config before
+3. **Set `dns.port: 5335` in the Secret *and* in the live config before
    deploying the host-network overlay.** Node port 53 belongs to
    `systemd-resolved`; AdGuard cannot bind it from the host network namespace.
-   The Service still publishes `.53:53` and forwards to 5353.
+   The Service still publishes `.53:53` and forwards to 5335. (5353 is
+   mDNS/avahi, so it is not usable here.)
 4. **Pin the k3s node's address (`.163`) before the cutover.** The node leases
    `.163` from the Hub's DHCP pool. Once AdGuard takes over DHCP you must not
    lose the node. Set a static IP on the node's `enp3s0` interface, or add a
@@ -109,7 +110,7 @@ dns:
     - 0.0.0.0
   # Host-network pod: node :53 belongs to systemd-resolved. The DNS Service
   # publishes .53:53 and forwards to this port.
-  port: 5353
+  port: 5335
   upstream_dns:
     - https://dns.quad9.net/dns-query
     - https://cloudflare-dns.com/dns-query
