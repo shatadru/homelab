@@ -1,0 +1,59 @@
+# AdGuard Home is the LAN DNS resolver and DNS-level ad/tracker blocker.
+#
+# DNS is published on the fixed MetalLB VIP below. Reserve this address outside
+# the router's DHCP pool before deploying; DHCP clients will use it as their
+# primary DNS server after the router is updated.
+adguard-home:
+  # The complete AdGuardHome.yaml—including the bcrypt-protected admin user—is
+  # intentionally held in an out-of-band Secret. See docs/adguard-home.md.
+  # It contains the DNS filters and DNS rewrites that replace per-machine
+  # /etc/hosts entries for the homelab's internal hostnames.
+  config:
+    existingSecret: adguard-home-config
+
+  persistence:
+    conf:
+      enabled: true
+      storageClass: local-path
+      size: 512Mi
+    work:
+      enabled: true
+      storageClass: local-path
+      # Holds query logs, statistics, and downloaded filter lists.
+      size: 5Gi
+
+  service:
+    web:
+      type: ClusterIP
+    dns:
+      type: LoadBalancer
+      loadBalancerIP: 192.168.0.53
+      annotations:
+        metallb.io/ip-allocated-from-pool: homelab
+        metallb.io/loadBalancerIPs: 192.168.0.53
+      # This single-node cluster always has the endpoint locally. Preserving
+      # client addresses makes query logs useful and avoids unnecessary SNAT.
+      externalTrafficPolicy: Local
+
+  ingress:
+    enabled: true
+    ingressClassName: traefik
+    annotations:
+      cert-manager.io/cluster-issuer: homelab-selfsigned
+    hosts:
+      - host: adguard.home.shatadru.in
+        paths:
+          - path: /
+            pathType: Prefix
+    tls:
+      - secretName: adguard-home-tls
+        hosts:
+          - adguard.home.shatadru.in
+
+  resources:
+    requests:
+      cpu: 100m
+      memory: 128Mi
+    limits:
+      cpu: "500m"
+      memory: 512Mi

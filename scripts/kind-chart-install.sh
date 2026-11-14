@@ -37,6 +37,7 @@ CHARTS=(
   "metallb|metallb|metallb-system"
   "traefik|traefik|traefik"
   "gatus|gatus|gatus"
+  "adguard-home|adguard-home|adguard-home"
   "argocd|argo-cd|argocd"
 )
 

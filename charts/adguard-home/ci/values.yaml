@@ -1,0 +1,37 @@
+# Kind has no MetalLB and CI must not require the live cluster's out-of-band
+# AdGuard configuration secret. This minimal, isolated configuration only
+# proves that the chart installs and becomes Ready.
+adguard-home:
+  config:
+    existingSecret: ""
+    adGuardHome:
+      http:
+        address: 0.0.0.0:80
+      dns:
+        bind_hosts:
+          - 0.0.0.0
+        port: 53
+        upstream_dns:
+          - https://dns.quad9.net/dns-query
+        bootstrap_dns:
+          - 9.9.9.9
+        protection_enabled: true
+        filtering_enabled: true
+      schema_version: 29
+
+  persistence:
+    conf:
+      storageClass: standard
+    work:
+      storageClass: standard
+
+  service:
+    dns:
+      type: ClusterIP
+      loadBalancerIP: ""
+      # Clear the homelab MetalLB annotations from values.yaml; Kind has no
+      # MetalLB and these would otherwise linger on the rendered Service.
+      annotations: null
+
+  ingress:
+    enabled: false
