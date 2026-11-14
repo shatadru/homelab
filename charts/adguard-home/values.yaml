@@ -30,7 +30,11 @@ adguard-home:
       loadBalancerIP: 192.168.0.53
       annotations:
         metallb.io/ip-allocated-from-pool: homelab
-        metallb.io/loadBalancerIPs: 192.168.0.53
+      # NOTE: do not add metallb.io/loadBalancerIPs here. The chart renders
+      # spec.loadBalancerIP from service.dns.loadBalancerIP, and MetalLB
+      # rejects a Service that sets BOTH the annotation and the field
+      # ("service can not have both metallb.io/loadBalancerIPs and
+      # svc.Spec.LoadBalancerIP"), leaving the EXTERNAL-IP <pending>.
       # This single-node cluster always has the endpoint locally. Preserving
       # client addresses makes query logs useful and avoids unnecessary SNAT.
       externalTrafficPolicy: Local
