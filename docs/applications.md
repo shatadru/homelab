@@ -16,7 +16,7 @@ Two groups: infrastructure (shared platform) and workloads (services you use).
 | cnpg | `charts/cnpg` | `cnpg-system` | Postgres operator |
 | monitoring-stack | `charts/monitoring-stack` | `monitoring` | Prometheus, Grafana, Alertmanager |
 | gatus | `charts/gatus` | `gatus` | Synthetic uptime checks |
-| adguard-home | `charts/adguard-home` | `adguard-home` | LAN DNS, ad blocking, and local DNS rewrites |
+| adguard-home | `manifests/adguard-home` (Kustomize) | `adguard-home` | LAN DNS, ad blocking, and local DNS rewrites |
 | tailscale-operator | `charts/tailscale-operator` | `tailscale` | Tailnet Ingress |
 | gateway-api-crds | upstream Gateway API repository | `kube-system` | Gateway API CRDs |
 

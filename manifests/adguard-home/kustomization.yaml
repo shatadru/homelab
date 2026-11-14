@@ -1,0 +1,29 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: adguard-home
+
+# Inflate the upstream chart instead of wrapping/vendoring it. Renovate's
+# kustomize manager tracks the `version` below, so bumps stay automatic.
+helmCharts:
+  - name: adguard-home
+    repo: https://repo.helmforge.dev
+    version: 1.5.5
+    releaseName: adguard-home
+    namespace: adguard-home
+    valuesFile: values.yaml
+
+# The chart has no hostNetwork value, and Helm cannot patch a dependency's
+# rendered output. The DHCP server must see L2 broadcasts on the physical LAN
+# interface, so patch the two host-network fields into the Deployment here.
+patches:
+  - target:
+      kind: Deployment
+      name: adguard-home-adguard-home
+    patch: |-
+      - op: add
+        path: /spec/template/spec/hostNetwork
+        value: true
+      - op: add
+        path: /spec/template/spec/dnsPolicy
+        value: ClusterFirstWithHostNet
