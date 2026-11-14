@@ -112,6 +112,15 @@ opencloud:
     enabled: false
 
   # ---------------------------------------------------------------------
+  # YJS (real-time collaboration) — disabled (main app is paused)
+  # `yjs` has its own gate in the upstream chart, separate from
+  # opencloud.opencloud.enabled, so the main app being off does not stop
+  # the yjs Deployment from running.
+  # ---------------------------------------------------------------------
+  yjs:
+    enabled: false
+
+  # ---------------------------------------------------------------------
   # WEB EXTENSIONS / TIKA — disabled (not in use; main app is paused)
   # ---------------------------------------------------------------------
   webExtensions:

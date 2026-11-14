@@ -1,0 +1,6 @@
+dependencies:
+- name: opencloud
+  repository: oci://ghcr.io/tim-herbie/opencloud-helm
+  version: 3.2.2
+digest: sha256:484c47bb3d1e82f64d14a955f0c2a31edf8b92532f58cdf6b8c5d5c9e8d45266
+generated: "2026-11-14T18:51:02.844157348Z"
