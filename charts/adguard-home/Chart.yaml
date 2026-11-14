@@ -8,4 +8,4 @@ version: 0.1.0
 dependencies:
   - name: adguard-home
     repository: https://repo.helmforge.dev
-    version: 1.5.4
+    version: 1.5.5
