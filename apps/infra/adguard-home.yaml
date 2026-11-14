@@ -16,7 +16,7 @@ spec:
 
   source:
     repoURL: git@github.com:shatadru/homelab.git
-    path: charts/adguard-home
+    path: manifests/adguard-home
     targetRevision: main
 
   syncPolicy:

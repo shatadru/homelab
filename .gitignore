@@ -36,6 +36,9 @@ charts/*/charts/
 !charts/nfs-csi/charts/
 !charts/paperless-ngx/charts/
 
+# Kustomize inflates helmCharts under the overlay; never commit the pulled chart.
+manifests/*/charts/
+
 # Editor / OS
 .vim/
 *.swp

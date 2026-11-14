@@ -34,3 +34,4 @@ ignore: |
   .git/
   charts/*/charts/
   charts/*/templates/
+  manifests/*/charts/

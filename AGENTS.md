@@ -3,7 +3,7 @@
 Guidance for human and AI agents working in this repository. This is a
 GitOps homelab: the desired state of a single K3s cluster lives here, and
 ArgO CD syncs `main` into the cluster. **You change the cluster by merging a
-pull request**, not by running `kubectl apply` against manifests in this repo.
+pull request**, not by running `kubectl apply` against manifests in this repository.
 
 ## Repository layout
 
@@ -14,7 +14,8 @@ homelab/
 │   ├── infra/     #   Shared platform: cilium, traefik, metallb, cert-manager, cnpg, monitoring...
 │   └── workloads/ #   User services: immich, paperless-ngx, homarr, opencloud, labforge
 ├── bootstrap/     # One-time K3s + Argo CD install (argocd/, k3s/)
-├── charts/        # Helm "wrapper" charts — what Argo actually deploys
+├── charts/        # Helm "wrapper" charts — what Argo actually deploys for most apps
+├── manifests/     # Kustomize overlays (upstream Helm chart inflated + patched, e.g. AdGuard)
 ├── clusters/      # Root app-of-apps entry points (production/{infra,workloads}.yaml)
 ├── docs/          # Human guides; the source of truth for how pieces work
 ├── scripts/       # Local + CI test helpers (helm-chart-test.sh, kind-chart-install.sh)
@@ -27,7 +28,7 @@ homelab/
 
 ## How an app gets on the cluster (mental model)
 
-```
+```text
 PR → Git main → Argo CD → clusters/production/{infra,workloads}.yaml
    → apps/{infra,workloads}/*.yaml (Argo Application)
    → charts/<app>/ (Helm wrapper) → K3s cluster
@@ -37,10 +38,16 @@ PR → Git main → Argo CD → clusters/production/{infra,workloads}.yaml
    "app of apps": an Argo Application pointing at `apps/workloads` (recurse)
    and `apps/infra` respectively.
 2. Each **`apps/<group>/<app>.yaml`** is an Argo CD `Application` that points
-   at this repo, a chart path under `charts/<app>`, and a target namespace.
+   at this repository, a chart path under `charts/<app>` (or an overlay under
+   `manifests/<app>`), and a target namespace.
 3. **`charts/<app>/`** is a Helm wrapper chart. It depends on the upstream chart
-   (often OCI) and layers in custom `values.yaml` plus repo-owned templates
+   (often OCI) and layers in custom `values.yaml` plus repository-owned templates
    (e.g. CNPG `Cluster`, PVs/PVCs, StorageClasses, Ingress templates).
+4. **`manifests/<app>/`** is a Kustomize overlay for the rare case where a
+   chart needs a patch it does not expose as a value. It inflates the upstream
+   chart via `helmCharts` and patches the rendered objects (currently only
+   AdGuard Home, for `hostNetwork`). Requires
+   `kustomize.buildOptions: --enable-helm` in `charts/argocd/values.yaml`.
 4. Argo CD performs the sync. Auto-sync + `selfHeal` + `prune` (+ `ServerSideApply`
    and `CreateNamespace` sync options) are the norm.
 
@@ -52,7 +59,7 @@ Argo CD(argo-cd), CNI/network policy(Cilium, `kube-system`), cert-manager,
 MetalLB (`metallb-system`), Traefik ingress (`traefik`), local-path storage,
 nfs-csi (NAS, StorageClass `nas-nfs`), CNPG Postgres operator (`cnpg-system`),
 monitoring-stack (Prometheus/Grafana/Alertmanager, `monitoring`), gatus uptime,
-adguard-home (LAN DNS), tailscale-operator, and Gateway API CRDs (upstream repo).
+adguard-home (LAN DNS), tailscale-operator, and Gateway API CRDs (upstream repository).
 
 ### Workloads (`apps/workloads`) — user services
 
@@ -80,7 +87,7 @@ adguard-home (LAN DNS), tailscale-operator, and Gateway API CRDs (upstream repo)
 - **NFS flavors differ on purpose.** Immich PV uses NFSv3; `nas-nfs` uses
   nfsvers=4.2. OpenCloud expects NFSv4.2-style behavior. Don't unify them.
 - **Repos are OpenCode / GitOps artifacts.** e.g. `apps/*.yaml` references
-  `git@github.com:shatadru/homelab.git`. Keep the repoURL and repo layout
+  `git@github.com:shatadru/homelab.git`. Keep the repoURL and repository layout
   consistent.
 
 ## Local checks / CI
