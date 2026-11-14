@@ -5,6 +5,19 @@ GitOps homelab: the desired state of a single K3s cluster lives here, and
 ArgO CD syncs `main` into the cluster. **You change the cluster by merging a
 pull request**, not by running `kubectl apply` against manifests in this repo.
 
+## THE ONE RULE THAT OVERRIDES EVERYTHING ELSE
+
+**EVERY CHANGE MUST GO THROUGH A PULL REQUEST AND THE HUMAN OWNER'S CODE
+REVIEW. AN AGENT MUST NEVER MERGE A PULL REQUEST, PUSH DIRECTLY TO `main`, OR
+OTHERWISE CHANGE THE CLUSTER ON ITS OWN.**
+
+Opening a PR, updating its branch, and running read-only checks are allowed.
+**MERGING IS RESERVED FOR THE HUMAN OWNER.** This holds even when CI is green,
+even when the change is trivial, and even if a previous instruction approved a
+different PR. If a change is ready, say so and wait for an explicit "merge it"
+from the human. Never use `gh pr merge`, `--admin`, `--auto`, or a direct push
+to `main`.
+
 ## Repository layout
 
 ```text
