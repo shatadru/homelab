@@ -7,4 +7,10 @@ metadata:
 spec:
   ipAddressPools:
     - homelab
+{{- with .Values.homelabPool.interfaces }}
+  interfaces:
+{{- range . }}
+    - {{ . | quote }}
+{{- end }}
+{{- end }}
 {{- end }}

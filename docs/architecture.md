@@ -55,7 +55,9 @@ addresses from `192.168.0.10` to `192.168.0.80`. Traefik requests
 `192.168.0.11` from that pool. Gatus checks that address over HTTPS with
 a Host header. The process listens on 8000. The Service still publishes
 80 and 443, and port 80 redirects to HTTPS. Setting the container port
-back to 80 makes the non-root pod fail.
+back to 80 makes the non-root pod fail. The node is multi-homed, so the
+`L2Advertisement` is pinned to `enp3s0`; without that MetalLB also answers
+ARP for the VIP on the NAS interface (`enp4s0`) and the unused ports.
 
 ## Storage split
 
