@@ -9,9 +9,10 @@ for LAN clients.
 ## Design
 
 - **DNS VIP:** `192.168.0.53`, published by MetalLB on both UDP and TCP 53.
-- **DNS listener:** the pod is host-networked (required for DHCP), so AdGuard
-  listens on the node's `:5335`; the Service still publishes `:53` on the `.53`
-  VIP and kube-proxy forwards to it. Node `:53` stays with `systemd-resolved`.
+- **DNS listener:** the pod is host-networked (required for DHCP) and binds
+  `192.168.0.163:53`. `systemd-resolved` only owns the loopback
+  (`127.0.0.53/54`) and `5353` is mDNS (avahi), so `.163:53` is free. The `.53`
+  VIP still publishes `:53` and forwards here for manually configured clients.
 - **Web UI:** `https://adguard.home.shatadru.in`, through the existing Traefik
   VIP (`192.168.0.11`).
 - **Configuration:** `adguard-home-config` Secret in the `adguard-home`
@@ -73,11 +74,11 @@ as a buffer between the two pools.
 1. Reserve `192.168.0.53` inside the MetalLB pool (it is currently unassigned).
 2. Create the namespace and configuration Secret before Argo CD syncs the
    Application. Do not add the generated file or password hash to Git.
-3. **Set `dns.port: 5335` in the Secret *and* in the live config before
-   deploying the host-network overlay.** Node port 53 belongs to
-   `systemd-resolved`; AdGuard cannot bind it from the host network namespace.
-   The Service still publishes `.53:53` and forwards to 5335. (5353 is
-   mDNS/avahi, so it is not usable here.)
+3. **Set `dns.bind_hosts: ["192.168.0.163"]` and `dns.port: 53` in the Secret
+   *and* in the live config before deploying the host-network overlay.** Binding
+   the node IP (not `0.0.0.0`) avoids the `systemd-resolved` loopback listeners;
+   `5353` is mDNS/avahi. The DHCP server then advertises `.163` by default,
+   which is a working resolver.
 4. **Pin the k3s node's address (`.163`) before the cutover.** The node leases
    `.163` from the Hub's DHCP pool. Once AdGuard takes over DHCP you must not
    lose the node. Set a static IP on the node's `enp3s0` interface, or add a
@@ -107,10 +108,10 @@ users:
     password: "${password_hash}"
 dns:
   bind_hosts:
-    - 0.0.0.0
-  # Host-network pod: node :53 belongs to systemd-resolved. The DNS Service
-  # publishes .53:53 and forwards to this port.
-  port: 5335
+    - 192.168.0.163
+  # Host-network pod: bind the node IP on :53. systemd-resolved only owns
+  # 127.0.0.53/54, and 5353 is mDNS (avahi).
+  port: 53
   upstream_dns:
     - https://dns.quad9.net/dns-query
     - https://cloudflare-dns.com/dns-query
@@ -216,13 +217,12 @@ server with:
 | DHCPv4 range end | `192.168.0.254` |
 | Netmask | `255.255.255.0` |
 | Gateway address | `192.168.0.1` |
-| DNS servers | no UI field — add DHCP option `6 ips 192.168.0.53` (below) |
+| DNS servers | automatic — AdGuard advertises its interface address, `.163` |
 | Lease duration | e.g. 24h |
 
-AdGuard advertises itself as the client DNS server by default. Because the pod
-is host-networked, "itself" is the node's `192.168.0.163`, where nothing listens
-on port 53. Add a custom option so clients get the VIP: in **DHCP options**, add
-`6 ips 192.168.0.53`.
+AdGuard advertises its own interface address as the client DNS server. With the
+listener bound to `.163:53`, that default is valid — no custom DHCP option is
+needed. The `.53` VIP remains available for manually configured clients.
 
 Keep the pool at `192.168.0.100-192.168.0.254` — it mirrors the Hub's current
 range and never touches the MetalLB pool (`192.168.0.10-80`).
@@ -250,13 +250,15 @@ be trusted by the client).
 ### 3. Verify
 
 ```bash
-dig @192.168.0.53 argocd.home.shatadru.in   # local rewrite, answers .11
-dig @192.168.0.53 example.com                # resolves via upstream
+dig @192.168.0.163 argocd.home.shatadru.in  # node IP, what DHCP hands out
+dig @192.168.0.53 argocd.home.shatadru.in   # VIP, for manual clients
+dig @192.168.0.163 example.com               # resolves via upstream
 ```
 
-From a client, confirm its resolver is `192.168.0.53` (check DHCP-assigned DNS,
-and run a DNS-leak test to ensure the Virgin Media/IPv6 resolver does not
-appear). AdGuard Home's query log shows which clients are actually using it.
+From a client, confirm its resolver is `192.168.0.163` (the DHCP default; the
+`.53` VIP also works) and run a DNS-leak test to ensure the Virgin Media/IPv6
+resolver does not appear. AdGuard Home's query log shows which clients are
+actually using it.
 
 The AdGuard UI is the client dashboard: **DHCP** lists the lease (hostname, IP,
 MAC, expiry) and **Dashboard → Top clients** shows the device once it queries.
@@ -276,5 +278,6 @@ Secret and recreate the configuration PVC when a complete declarative reset is
 intended.
 
 Rollback has two parts: re-enable the Hub's DHCP server, and — if you also
-remove the host-network patch — set the config's `dns.port` back to `53` so the
-Service's `targetPort` matches the listener again.
+remove the host-network overlay — set `dns.bind_hosts: ["0.0.0.0"]` because the
+pod network has no `.163` address. Port 53 is fine there (no
+`systemd-resolved`), and the overlay's `containerPorts.dns` stays `53`.
