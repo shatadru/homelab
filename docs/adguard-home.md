@@ -74,11 +74,12 @@ as a buffer between the two pools.
 1. Reserve `192.168.0.53` inside the MetalLB pool (it is currently unassigned).
 2. Create the namespace and configuration Secret before Argo CD syncs the
    Application. Do not add the generated file or password hash to Git.
-3. **Set `dns.bind_hosts: ["192.168.0.163"]` and `dns.port: 53` in the Secret
-   *and* in the live config before deploying the host-network overlay.** Binding
-   the node IP (not `0.0.0.0`) avoids the `systemd-resolved` loopback listeners;
-   `5353` is mDNS/avahi. The DHCP server then advertises `.163` by default,
-   which is a working resolver.
+3. **The overlay enforces the DNS bind.** Its `patch-dns-bind` init container
+   sets `dns.bind_hosts: ["192.168.0.163"]` and `dns.port: 53` (and normalizes
+   the DHCP range end to `.254`) after the config is seeded. Binding the node
+   IP, not `0.0.0.0`, avoids the `systemd-resolved` loopback listeners; `5353`
+   is mDNS/avahi. DHCP then advertises `.163` by default, which is a working
+   resolver.
 4. **Pin the k3s node's address (`.163`) before the cutover.** The node leases
    `.163` from the Hub's DHCP pool. Once AdGuard takes over DHCP you must not
    lose the node. Set a static IP on the node's `enp3s0` interface, or add a
