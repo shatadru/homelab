@@ -8,11 +8,13 @@ config:
   # Git. It replaces the per-machine /etc/hosts entries for the homelab.
   existingSecret: adguard-home-config
 
-# Host-network pod: node port 53 belongs to systemd-resolved, and 5353 is
-# mDNS (avahi-daemon), so AdGuard listens on 5335. The DNS Service still
-# publishes .53:53 and forwards here.
+# The host-network pod pins the DNS listener to the node IP on :53.
+# systemd-resolved only owns the loopback (127.0.0.53/54) and 5353 is mDNS
+# (avahi), so 192.168.0.163:53 is free. AdGuard's DHCP then advertises .163
+# (its interface address) by default, which is a valid resolver. The .53
+# Service VIP still publishes :53 and forwards here for manual clients.
 containerPorts:
-  dns: 5335
+  dns: 53
 
 persistence:
   conf:
