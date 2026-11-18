@@ -1,6 +1,6 @@
 dependencies:
 - name: paperless-ngx
   repository: https://codeopsms.github.io/paperless-ngx-helm-chart/
-  version: 0.4.1
-digest: sha256:e3c8e3fd840e4cffb6a976f82e93c21619f94c5a22a5df105335210a3fe25925
-generated: "2026-11-03T00:58:34.475269412Z"
+  version: 0.4.2
+digest: sha256:a00f34942b8c7e09fa8a266124371e223d9903856a3c9421fdedf3cee0b8f9d9
+generated: "2026-11-18T05:11:04.556801682Z"
