@@ -1,9 +1,5 @@
 argo-cd:
   configs:
-    cm:
-      # AdGuard Home is a Kustomize overlay that inflates the upstream Helm
-      # chart (manifests/adguard-home). Kustomize needs this flag to run Helm.
-      kustomize.buildOptions: --enable-helm
     params:
       server.insecure: true
     secret:

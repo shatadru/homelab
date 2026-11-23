@@ -49,7 +49,7 @@ gatus:
 
       - name: Argo CD
         group: internal
-        url: https://192.168.0.11
+        url: https://192.168.8.11
         interval: 60s
         headers:
           Host: argocd.home.shatadru.in
@@ -60,7 +60,7 @@ gatus:
 
       - name: Grafana
         group: internal
-        url: https://192.168.0.11
+        url: https://192.168.8.11
         interval: 60s
         headers:
           Host: grafana.home.shatadru.in
@@ -71,7 +71,7 @@ gatus:
 
       - name: Prometheus
         group: internal
-        url: https://192.168.0.11
+        url: https://192.168.8.11
         interval: 60s
         headers:
           Host: prometheus.home.shatadru.in
@@ -82,7 +82,7 @@ gatus:
 
       - name: Alertmanager
         group: internal
-        url: https://192.168.0.11
+        url: https://192.168.8.11
         interval: 60s
         headers:
           Host: alertmanager.home.shatadru.in
@@ -93,7 +93,7 @@ gatus:
 
       - name: Gatus
         group: internal
-        url: https://192.168.0.11
+        url: https://192.168.8.11
         interval: 60s
         headers:
           Host: gatus.home.shatadru.in

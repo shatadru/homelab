@@ -1,7 +1,7 @@
 homelabPool:
   enabled: true
   addresses:
-    - 192.168.0.10-192.168.0.80
+    - 192.168.8.10-192.168.8.80
   # The node is multi-homed: enp4s0 serves the NAS network (192.168.100.0/24)
   # and the 25G/WiFi ports are unused. With an empty interface list MetalLB
   # creates an ARP responder on every NIC and answers for the VIP on networks
