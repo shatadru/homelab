@@ -40,9 +40,6 @@ CHARTS=(
   "argocd|argo-cd|argocd"
 )
 
-# adguard-home is a Kustomize overlay (manifests/adguard-home), not a wrapper
-# chart, so it is rendered by the kustomize CI job instead of installed here.
-
 need_bin() {
   command -v "$1" >/dev/null 2>&1 || {
     echo "error: '$1' not found on PATH" >&2

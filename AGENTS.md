@@ -15,7 +15,6 @@ homelab/
 │   └── workloads/ #   User services: immich, paperless-ngx, homarr, opencloud, labforge
 ├── bootstrap/     # One-time K3s + Argo CD install (argocd/, k3s/)
 ├── charts/        # Helm "wrapper" charts — what Argo actually deploys for most apps
-├── manifests/     # Kustomize overlays (upstream Helm chart inflated + patched, e.g. AdGuard)
 ├── clusters/      # Root app-of-apps entry points (production/{infra,workloads}.yaml)
 ├── docs/          # Human guides; the source of truth for how pieces work
 ├── scripts/       # Local + CI test helpers (helm-chart-test.sh, kind-chart-install.sh)
@@ -43,11 +42,6 @@ PR → Git main → Argo CD → clusters/production/{infra,workloads}.yaml
 3. **`charts/<app>/`** is a Helm wrapper chart. It depends on the upstream chart
    (often OCI) and layers in custom `values.yaml` plus repository-owned templates
    (e.g. CNPG `Cluster`, PVs/PVCs, StorageClasses, Ingress templates).
-4. **`manifests/<app>/`** is a Kustomize overlay for the rare case where a
-   chart needs a patch it does not expose as a value. It inflates the upstream
-   chart via `helmCharts` and patches the rendered objects (currently only
-   AdGuard Home, for `hostNetwork`). Requires
-   `kustomize.buildOptions: --enable-helm` in `charts/argocd/values.yaml`.
 4. Argo CD performs the sync. Auto-sync + `selfHeal` + `prune` (+ `ServerSideApply`
    and `CreateNamespace` sync options) are the norm.
 
@@ -59,7 +53,8 @@ Argo CD(argo-cd), CNI/network policy(Cilium, `kube-system`), cert-manager,
 MetalLB (`metallb-system`), Traefik ingress (`traefik`), local-path storage,
 nfs-csi (NAS, StorageClass `nas-nfs`), CNPG Postgres operator (`cnpg-system`),
 monitoring-stack (Prometheus/Grafana/Alertmanager, `monitoring`), gatus uptime,
-adguard-home (LAN DNS), tailscale-operator, and Gateway API CRDs (upstream repository).
+tailscale-operator, and Gateway API CRDs (upstream repository). LAN DNS is
+served by the router's AdGuard Home, not by an in-cluster workload.
 
 ### Workloads (`apps/workloads`) — user services
 

@@ -30,7 +30,7 @@ cilium:
   ingressController:
     enabled: false
 
-  k8sServiceHost: "192.168.0.163"
+  k8sServiceHost: "192.168.8.163"
   k8sServicePort: "6443"
 
   # cilium-agent DaemonSet resources.

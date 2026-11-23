@@ -45,14 +45,14 @@ graph TD
 
 | Network | Purpose |
 | --- | --- |
-| `192.168.0.0/24` | Node LAN and MetalLB VIP pool |
+| `192.168.8.0/24` | Node LAN and MetalLB VIP pool |
 | `192.168.100.0/24` | NAS / NFS only (not Kubernetes node traffic) |
 | `10.42.0.0/16` | Pod CIDR |
 | `10.43.0.0/16` | Service CIDR |
 
-The first node is `minisforum-server` at `192.168.0.163`. MetalLB can hand out
-addresses from `192.168.0.10` to `192.168.0.80`. Traefik requests
-`192.168.0.11` from that pool. Gatus checks that address over HTTPS with
+The first node is `minisforum-server` at `192.168.8.163`. MetalLB can hand out
+addresses from `192.168.8.10` to `192.168.8.80`. Traefik requests
+`192.168.8.11` from that pool. Gatus checks that address over HTTPS with
 a Host header. The process listens on 8000. The Service still publishes
 80 and 443, and port 80 redirects to HTTPS. Setting the container port
 back to 80 makes the non-root pod fail. The node is multi-homed, so the

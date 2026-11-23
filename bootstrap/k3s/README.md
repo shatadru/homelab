@@ -15,11 +15,11 @@ install Cilium, then follow `docs/bootstrap.md`.
 - K3s `v1.36.3+k3s1`
 - Cilium `1.20.2`
 - Initial node: `minisforum-server`
-- Node IP: `192.168.0.163`
+- Node IP: `192.168.8.163`
 
 ## Networking
 
-- LAN: `192.168.0.0/24`
+- LAN: `192.168.8.0/24`
 - Storage/NFS: `192.168.100.0/24`
 - Pod CIDR: `10.42.0.0/16`
 - Service CIDR: `10.43.0.0/16`

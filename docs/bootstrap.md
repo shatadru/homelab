@@ -35,7 +35,7 @@ sequenceDiagram
 Documented in `bootstrap/k3s/README.md`:
 
 - K3s on `minisforum-server`
-- Node IP `192.168.0.163`
+- Node IP `192.168.8.163`
 - Cilium as CNI
 - Dedicated NAS network kept off the Kubernetes node IP path
 

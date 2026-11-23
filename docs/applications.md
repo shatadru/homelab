@@ -16,7 +16,6 @@ Two groups: infrastructure (shared platform) and workloads (services you use).
 | cnpg | `charts/cnpg` | `cnpg-system` | Postgres operator |
 | monitoring-stack | `charts/monitoring-stack` | `monitoring` | Prometheus, Grafana, Alertmanager |
 | gatus | `charts/gatus` | `gatus` | Synthetic uptime checks |
-| adguard-home | `manifests/adguard-home` (Kustomize) | `adguard-home` | LAN DNS, ad blocking, and local DNS rewrites |
 | tailscale-operator | `charts/tailscale-operator` | `tailscale` | Tailnet Ingress |
 | gateway-api-crds | upstream Gateway API repository | `kube-system` | Gateway API CRDs |
 
@@ -43,15 +42,17 @@ flowchart LR
   ts --> svc
 ```
 
-AdGuard Home publishes LAN DNS on `192.168.0.53`. Configure that address as the
-router DHCP DNS server after following [the AdGuard Home runbook](adguard-home.md).
-Its DNS rewrites point the LAN names below at Traefik (`192.168.0.11`):
-`adguard.home.shatadru.in`, `argocd.home.shatadru.in`,
-`grafana.home.shatadru.in`, `prometheus.home.shatadru.in`,
-`alertmanager.home.shatadru.in`, `gatus.home.shatadru.in`,
-`homarr.home.shatadru.in`, `immich.home.shatadru.in`,
-`paperless.home.shatadru.in`, `cloud.home.shatadru.in`,
-`collabora.home.shatadru.in`, and `companion.home.shatadru.in`.
+LAN DNS is served by the router's AdGuard Home, not by an in-cluster workload.
+Point the router's DHCP DNS at the router address and configure these rewrites
+there, all to Traefik (`192.168.8.11`):
+`argocd.home.shatadru.in`, `grafana.home.shatadru.in`,
+`prometheus.home.shatadru.in`, `alertmanager.home.shatadru.in`,
+`gatus.home.shatadru.in`, `homarr.home.shatadru.in`,
+`immich.home.shatadru.in`, `paperless.home.shatadru.in`,
+`cloud.home.shatadru.in`, `collabora.home.shatadru.in`, and
+`companion.home.shatadru.in`. The router's own UI is at
+`http://192.168.8.1`; add an `adguard.home.shatadru.in` rewrite on the router
+itself only if that hostname is still wanted.
 `id.home.shatadru.in` is the Pocket ID LAN alias from `charts/labforge`.
 Tailscale Ingress short names are `immich`, `paperless`, `labforge`, and
 `pocket-id`. Paperless also allows `paperless.tail8fbf37.ts.net` and
